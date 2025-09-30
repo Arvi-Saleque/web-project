@@ -1,5 +1,7 @@
 import { prisma } from '@/lib/db';
 import { unstable_noStore as noStore } from 'next/cache';
+import StatCard from '@/components/ui/StatCard';
+import Card from '@/components/ui/Card';
 
 type Statistic = { label: string; value: string; icon?: string };
 
@@ -21,6 +23,24 @@ export default async function AboutSection() {
     { label: 'Current Students', value: totalStudents, icon: 'students' },
     { label: 'Graduates', value: graduatedStudents, icon: 'graduation' },
     { label: 'Qualified Teachers', value: qualifiedTeachers, icon: 'teachers' }
+  ];
+
+  const coreValues = [
+    {
+      title: 'Excellence',
+      description: 'Striving for the highest standards in Islamic education and character development',
+      icon: 'excellence'
+    },
+    {
+      title: 'Compassion',
+      description: 'Fostering empathy, kindness, and understanding in all our interactions',
+      icon: 'compassion'
+    },
+    {
+      title: 'Integrity',
+      description: 'Upholding honesty, transparency, and moral principles in all our endeavors',
+      icon: 'integrity'
+    }
   ];
 
   const getIcon = (iconType: string) => {
@@ -49,6 +69,24 @@ export default async function AboutSection() {
         return (
           <svg className={iconClasses} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        );
+      case 'excellence':
+        return (
+          <svg className={iconClasses} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </svg>
+        );
+      case 'compassion':
+        return (
+          <svg className={iconClasses} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        );
+      case 'integrity':
+        return (
+          <svg className={iconClasses} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
           </svg>
         );
       default:
@@ -82,13 +120,13 @@ export default async function AboutSection() {
         <div className="mb-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
             {statistics.map((stat, index) => (
-              <div key={index} className="text-center bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-50 rounded-full mb-4">
-                  {getIcon(stat.icon || '')}
-                </div>
-                <div className="text-2xl md:text-3xl font-bold text-blue-600 mb-2">{stat.value}</div>
-                <div className="text-sm md:text-base text-gray-600 font-medium">{stat.label}</div>
-              </div>
+              <StatCard
+                key={index}
+                title={stat.label}
+                value={stat.value}
+                icon={getIcon(stat.icon || '')}
+                color="blue"
+              />
             ))}
           </div>
         </div>
@@ -96,7 +134,7 @@ export default async function AboutSection() {
         {/* Mission & Vision Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Mission */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+          <Card className="" shadow="lg" border={true}>
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,10 +146,10 @@ export default async function AboutSection() {
             <p className="text-gray-600 leading-relaxed text-lg">
               {mission}
             </p>
-          </div>
+          </Card>
 
           {/* Vision */}
-          <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-8 text-white shadow-lg">
+          <Card className="bg-gradient-to-br from-blue-600 to-blue-700 text-white" shadow="lg" border={false}>
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,7 +162,7 @@ export default async function AboutSection() {
             <p className="text-blue-100 leading-relaxed text-lg">
               {vision}
             </p>
-          </div>
+          </Card>
         </div>
 
         {/* Core Values */}
@@ -139,42 +177,14 @@ export default async function AboutSection() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'Excellence',
-                description: 'Striving for the highest standards in Islamic education and character development',
-                icon: (
-                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                  </svg>
-                )
-              },
-              {
-                title: 'Compassion',
-                description: 'Fostering empathy, kindness, and understanding in all our interactions',
-                icon: (
-                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                )
-              },
-              {
-                title: 'Integrity',
-                description: 'Upholding honesty, transparency, and moral principles in all our endeavors',
-                icon: (
-                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                )
-              }
-            ].map((value, index) => (
-              <div key={index} className="text-center group">
+            {coreValues.map((value, index) => (
+              <Card key={index} className="text-center group" hover={true} border={true}>
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-50 rounded-full mb-6 group-hover:bg-blue-100 transition-colors duration-300">
-                  {value.icon}
+                  {getIcon(value.icon)}
                 </div>
                 <h4 className="text-xl font-semibold text-gray-900 mb-4">{value.title}</h4>
                 <p className="text-gray-600 leading-relaxed">{value.description}</p>
-              </div>
+              </Card>
             ))}
           </div>
         </div>

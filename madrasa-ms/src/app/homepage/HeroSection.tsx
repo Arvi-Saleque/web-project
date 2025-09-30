@@ -31,7 +31,7 @@ export default async function HeroSection() {
     ];
 
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <div
           className="w-full h-full bg-cover bg-center bg-no-repeat"
@@ -41,22 +41,22 @@ export default async function HeroSection() {
         />
       </div>
 
-      <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+      <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto py-20">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight">
           <span className="block text-white drop-shadow-lg">{titleLine1}</span>
           <span className="block text-blue-200 drop-shadow-lg">{titleLine2}</span>
         </h1>
 
-        <p className="text-lg sm:text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto leading-relaxed drop-shadow-md px-4">
           {subtitle}
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 px-4">
           <Link href={cta1Href}>
             <Button
               variant="primary"
               size="lg"
-              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 min-w-[200px]"
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 w-full sm:min-w-[200px] text-white"
             >
               {cta1Text}
             </Button>
@@ -66,14 +66,14 @@ export default async function HeroSection() {
             <Button
               variant="outline"
               size="lg"
-              className="border-2 border-white text-black hover:bg-white hover:text-blue-900 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 min-w-[200px]"
+              className="border-2 border-white text-black bg-transparent hover:bg-white hover:text-blue-900 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 w-full sm:min-w-[200px]"
             >
               {cta2Text}
             </Button>
           </Link>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <div className="mt-8 sm:mt-12 md:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-4">
           {features.map((f, i) => (
             <Card
               key={i}
@@ -86,14 +86,14 @@ export default async function HeroSection() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">{f.title}</h3>
-              <p className="text-blue-100">{f.description}</p>
+              <h3 className="text-lg md:text-xl font-semibold mb-2">{f.title}</h3>
+              <p className="text-blue-100 text-sm md:text-base">{f.description}</p>
             </Card>
           ))}
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 hidden sm:block">
         <div className="animate-bounce">
           <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
