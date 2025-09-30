@@ -1,50 +1,85 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Button from '@/components/ui/Button';
 
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
-const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  const pathname = usePathname();
+type NavItem =
+  | {
+      name: string;
+      href: string;
+      icon: React.ReactNode;
+      description?: string;
+      children?: undefined;
+    }
+  | {
+      name: string;
+      href?: string; // parent can be a landing page, but optional
+      icon: React.ReactNode;
+      description?: string;
+      children: { name: string; href: string }[];
+    };
 
-  const navigation = [
+export default function AdminLayout({ children }: DashboardLayoutProps) {
+  const pathname = usePathname();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // ------- NAV TREE (dropdown groups) -------
+  const navigation: NavItem[] = [
     {
       name: 'Dashboard',
       href: '/admin',
+      description: 'Overview & analytics',
       icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z" />
         </svg>
       ),
     },
-    {
-      name: 'Content Management',
-      href: '/admin/content',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-        </svg>
-      ),
-    },
+
+    // ====== DROPDOWN GROUP: ABOUT ======
     {
       name: 'About Management',
-      href: '/admin/about',
+      href: '/admin/aboutpage', // landing page (optional)
+      description: 'Institution information',
       icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
       ),
+      children: [
+        { name: 'About Us', href: '/admin/aboutpage/about' },
+        { name: 'Mission & Vision', href: '/admin/aboutpage/mission' },
+        { name: "Chairman’s Message", href: '/admin/aboutpage/chairman' },
+        { name: 'Committee', href: '/admin/aboutpage/comette' }, // keep your current folder name
+      ],
     },
+    {
+      name: 'Academic Management',
+      href: '/admin/academicpage', // landing page (optional)
+      description: 'Institution information',
+      icon: (
+        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
+      ),
+      children: [
+        { name: 'Curriculum Overview', href: '/admin/academicpage/curriculum' },
+      ],
+    },
+
     {
       name: 'Students',
       href: '/admin/students',
+      description: 'Student management',
       icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
         </svg>
       ),
@@ -52,8 +87,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     {
       name: 'Teachers',
       href: '/admin/teachers',
+      description: 'Faculty management',
       icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
         </svg>
       ),
@@ -61,125 +97,234 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     {
       name: 'Classes',
       href: '/admin/classes',
+      description: 'Class setup',
       icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-        </svg>
-      ),
-    },
-    {
-      name: 'Settings',
-      href: '/admin/settings',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
       ),
     },
   ];
 
+  // ------- OPEN STATE FOR DROPDOWNS -------
+  // make the group open if current path is inside it
+  const defaultOpen: Record<string, boolean> = useMemo(() => {
+    const state: Record<string, boolean> = {};
+    navigation.forEach((n) => {
+      if ('children' in n && n.children) {
+        state[n.name] = n.children.some((c) => pathname.startsWith(c.href)) || pathname === n.href;
+      }
+    });
+    return state;
+  }, [pathname]);
+
+  const [open, setOpen] = useState<Record<string, boolean>>(defaultOpen);
+  useEffect(() => setOpen(defaultOpen), [defaultOpen]);
+
+  const current =
+    navigation.find((n) =>
+      'children' in n && n.children
+        ? n.children.some((c) => pathname === c.href) || pathname === n.href
+        : pathname === n.href
+    ) ?? navigation[0];
+
   async function logout() {
-    await fetch("/api/logout", { method: "POST" });
-    window.location.href = "/admin/login";
+    await fetch('/api/logout', { method: 'POST' });
+    window.location.href = '/admin/login';
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-slate-50">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/20 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-900 to-blue-800 shadow-xl">
-        {/* Logo */}
-        <div className="flex items-center justify-center h-16 px-4 border-b border-blue-700">
-          <Link href="/" className="flex items-center">
-            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center mr-3">
-              <span className="text-blue-900 font-bold text-sm">M</span>
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 shadow-sm transition-transform duration-200 lg:translate-x-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
+        {/* Brand */}
+        <div className="h-16 px-5 flex items-center border-b border-slate-200">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-lg bg-slate-900 text-white grid place-items-center font-semibold">M</div>
+            <div className="leading-tight">
+              <div className="font-semibold text-slate-900">Madrasa</div>
+              <div className="text-xs text-slate-500">Admin</div>
             </div>
-            <span className="text-white font-bold text-lg">Admin Panel</span>
           </Link>
+          <button
+            className="ml-auto lg:hidden text-slate-500 hover:text-slate-700"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close sidebar"
+          >
+            <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
-        {/* Navigation */}
-        <nav className="mt-5 px-2 space-y-1">
-          {navigation.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
-                  isActive
-                    ? 'bg-blue-700 text-white'
-                    : 'text-blue-100 hover:bg-blue-700 hover:text-white'
-                }`}
-              >
-                <div className="mr-3 flex-shrink-0">
-                  {item.icon}
-                </div>
-                {item.name}
-              </Link>
-            );
-          })}
+        {/* Nav */}
+        <nav className="p-3">
+          <ul className="space-y-1.5">
+            {navigation.map((item) => {
+              const isLeaf = !('children' in item) || !item.children;
+              const activeLeaf = isLeaf && pathname === (item as any).href;
+
+              if (isLeaf) {
+                return (
+                  <li key={(item as any).href}>
+                    <Link
+                      href={(item as any).href}
+                      onClick={() => setSidebarOpen(false)}
+                      className={[
+                        'group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
+                        activeLeaf ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50',
+                      ].join(' ')}
+                    >
+                      <span className={activeLeaf ? 'text-blue-700' : 'text-slate-600'}>
+                        {item.icon}
+                      </span>
+                      <span className="font-medium">{item.name}</span>
+                    </Link>
+                  </li>
+                );
+              }
+
+              const isOpen = open[item.name];
+              const parentActive =
+                pathname === item.href || item.children.some((c) => pathname.startsWith(c.href));
+
+              return (
+                <li key={item.name}>
+                  <button
+                    type="button"
+                    onClick={() => setOpen((s) => ({ ...s, [item.name]: !s[item.name] }))}
+                    className={[
+                      'w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
+                      parentActive ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50',
+                    ].join(' ')}
+                    aria-expanded={isOpen}
+                    aria-controls={`section-${item.name}`}
+                  >
+                    <span className={parentActive ? 'text-blue-700' : 'text-slate-600'}>
+                      {item.icon}
+                    </span>
+                    <span className="font-medium flex-1 text-left">{item.name}</span>
+                    {/* caret */}
+                    <svg
+                      className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" />
+                    </svg>
+                  </button>
+
+                  {/* children */}
+                  <div
+                    id={`section-${item.name}`}
+                    className={`overflow-hidden transition-all ${isOpen ? 'max-h-96' : 'max-h-0'}`}
+                  >
+                    <ul className="mt-1 ml-8 border-l border-slate-200">
+                      {item.children.map((c) => {
+                        const active = pathname === c.href;
+                        return (
+                          <li key={c.href}>
+                            <Link
+                              href={c.href}
+                              onClick={() => setSidebarOpen(false)}
+                              className={[
+                                'flex items-center gap-2 pl-3 pr-2 py-2 text-sm rounded-md -ml-px',
+                                active
+                                  ? 'text-blue-700 bg-blue-50 border-l-2 border-blue-600'
+                                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50',
+                              ].join(' ')}
+                            >
+                              <span className="h-1.5 w-1.5 rounded-full bg-current opacity-60" />
+                              {c.name}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </nav>
+      </aside>
 
-        {/* User Section */}
-        <div className="absolute bottom-0 w-full p-4 border-t border-blue-700">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      {/* Main */}
+      <div className="lg:ml-72 min-h-screen flex flex-col">
+        {/* Top bar */}
+        <header className="sticky top-0 z-30 bg-white border-b border-slate-200">
+          <div className="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="lg:hidden text-slate-600 hover:text-slate-800 p-2 rounded-md hover:bg-slate-100"
+                aria-label="Open sidebar"
+              >
+                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-              </div>
-              <span className="ml-2 text-blue-100 text-sm">Admin</span>
-            </div>
-            <button
-              onClick={logout}
-              className="text-blue-200 hover:text-white p-1 rounded transition-colors duration-200"
-              title="Logout"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="ml-64 flex-1 flex flex-col overflow-hidden">
-        {/* Top Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200">
-          <div className="px-6 py-4">
-            <div className="flex items-center justify-between">
+              </button>
               <div>
-                <h1 className="text-2xl font-semibold text-gray-900">
-                  {navigation.find(item => item.href === pathname)?.name || 'Dashboard'}
+                <h1 className="text-xl font-semibold text-slate-900">
+                  {('children' in current && current.children)
+                    ? current.name
+                    : (current as any).name}
                 </h1>
-                <p className="text-gray-500 text-sm mt-1">
-                  Manage your madrasa efficiently
-                </p>
+                {'description' in current && current.description && (
+                  <p className="text-xs text-slate-500 mt-0.5">{current.description}</p>
+                )}
               </div>
-              <div className="flex items-center space-x-4">
-                <Link
-                  href="/"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Link href="/" className="hidden sm:block">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  icon={
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  }
                 >
                   View Site
-                </Link>
-              </div>
+                </Button>
+              </Link>
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={async () => {
+                  await fetch('/api/logout', { method: 'POST' });
+                  window.location.href = '/admin/login';
+                }}
+                icon={
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                }
+              >
+                Logout
+              </Button>
             </div>
           </div>
         </header>
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="px-6 py-6">
-            {children}
-          </div>
+        <main className="flex-1 bg-slate-50">
+          <div className="px-4 sm:px-6 lg:px-8 py-8">{children}</div>
         </main>
       </div>
     </div>
   );
-};
-
-export default DashboardLayout;
+}
