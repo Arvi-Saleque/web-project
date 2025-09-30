@@ -12,6 +12,8 @@ interface InputProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   icon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  onRightIconClick?: () => void;
 }
 
 export default function Input({
@@ -25,7 +27,9 @@ export default function Input({
   disabled = false,
   className = '',
   size = 'md',
-  icon
+  icon,
+  rightIcon,
+  onRightIconClick
 }: InputProps) {
   const sizeClasses = {
     sm: 'px-3 py-1.5 text-sm',
@@ -59,9 +63,20 @@ export default function Input({
             transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed
             ${error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : ''}
             ${icon ? 'pl-10' : ''}
+            ${rightIcon ? 'pr-10' : ''}
             ${sizeClasses[size]}
           `}
         />
+        {rightIcon && (
+          <div 
+            className={`absolute inset-y-0 right-0 pr-3 flex items-center ${
+              onRightIconClick ? 'cursor-pointer hover:text-gray-600' : 'pointer-events-none'
+            }`}
+            onClick={onRightIconClick}
+          >
+            {rightIcon}
+          </div>
+        )}
       </div>
       {error && (
         <p className="text-sm text-red-600">{error}</p>
