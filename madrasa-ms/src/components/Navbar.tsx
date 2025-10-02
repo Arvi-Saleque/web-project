@@ -12,7 +12,7 @@ const Navbar = () => {
     {
       label: 'About',
       submenu: [
-        { label: 'About Us', href: '/about' },
+        { label: 'About Us', href: '/aboutus/about' },
         { label: 'Mission & Vision', href: '/about/mission-vision' },
         { label: 'Advisory Committee', href: '/about/advisory-committee' },
         { label: "Chairman's Message", href: '/about/chairman-message' },
