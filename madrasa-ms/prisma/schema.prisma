@@ -1,48 +1,75 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")   // use the pooled Neon URL
+  directUrl = env("DIRECT_URL")    // optional: non-pooled URL for migrations
+}
+
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
-
+// User model for authentication
 model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // Hashed password
+  name      String
+  role      UserRole @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Profile relations based on role
+  adminProfile    AdminProfile?
+  teacherProfile  TeacherProfile?
+  studentProfile  StudentProfile?
+
+  @@index([email])
+}
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+// Admin Profile
+model AdminProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  position  String?  // e.g., "Principal", "Vice Principal"
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Teacher Profile
+model TeacherProfile {
   id           String   @id @default(cuid())
-  username     String   @unique
-  passwordHash String
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject      String?
+  qualification String?
+  phone        String?
+  address      String?
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
-model SiteSetting {
-  id          Int     @id @default(1)
-  headerTitle String  @default("Madrasa Management System")
-  // Add more site-wide settings as needed
-}
+// Student Profile
+model StudentProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rollNumber   String?  @unique
+  class        String?
+  section      String?
+  dateOfBirth  DateTime?
+  parentName   String?
+  parentPhone  String?
+  address      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-model HeroSection {
-  id          Int      @id @default(1)        // single row app-wide
-  titleLine1  String
-  titleLine2  String
-  subtitle    String
-  bgImageUrl  String
-  cta1Text    String
-  cta1Href    String
-  cta2Text    String
-  cta2Href    String
-  features    Json                              // [{title, description, icon?}]
-  updatedAt   DateTime @updatedAt
-}
-
-model AboutSection {
-  id                 Int      @id @default(1)   // single row app-wide
-  mission            String
-  vision             String
-  description        String
-  yearEstablished    String   @default("2010")
-  totalStudents      String   @default("500+")
-  graduatedStudents  String   @default("1200+")
-  qualifiedTeachers  String   @default("25")
-  updatedAt          DateTime @updatedAt
+  @@index([rollNumber])
 }

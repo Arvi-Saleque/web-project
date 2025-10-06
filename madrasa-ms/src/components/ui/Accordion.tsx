@@ -1,129 +1,66 @@
-import React, { useState } from 'react';
+"use client"
 
-interface AccordionItemProps {
-  title: string;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-  disabled?: boolean;
+import * as React from "react"
+import * as AccordionPrimitive from "@radix-ui/react-accordion"
+import { ChevronDownIcon } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+
+function Accordion({
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Root>) {
+  return <AccordionPrimitive.Root data-slot="accordion" {...props} />
 }
 
-interface AccordionProps {
-  children: React.ReactElement<AccordionItemProps>[];
-  allowMultiple?: boolean;
-  className?: string;
-}
-
-export function AccordionItem({ 
-  title, 
-  children, 
-  defaultOpen = false, 
-  disabled = false 
-}: AccordionItemProps) {
-  // This component is used as a child of Accordion, props are handled by parent
-  return null;
-}
-
-export default function Accordion({ 
-  children, 
-  allowMultiple = false, 
-  className = '' 
-}: AccordionProps) {
-  const [openItems, setOpenItems] = useState<Set<number>>(
-    new Set(
-      children
-        .map((child, index) => child.props.defaultOpen ? index : null)
-        .filter(index => index !== null) as number[]
-    )
-  );
-
-  const toggleItem = (index: number) => {
-    setOpenItems(prev => {
-      const newSet = new Set(prev);
-      
-      if (newSet.has(index)) {
-        newSet.delete(index);
-      } else {
-        if (!allowMultiple) {
-          newSet.clear();
-        }
-        newSet.add(index);
-      }
-      
-      return newSet;
-    });
-  };
-
+function AccordionItem({
+  className,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Item>) {
   return (
-    <div className={`divide-y divide-gray-200 ${className}`}>
-      {children.map((child, index) => {
-        const isOpen = openItems.has(index);
-        const { title, children: content, disabled } = child.props;
-
-        return (
-          <div key={index} className="border border-gray-200 rounded-lg mb-2 last:mb-0">
-            <button
-              className={`
-                w-full px-4 py-3 text-left flex items-center justify-between
-                hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset
-                transition-colors duration-200 rounded-t-lg
-                ${isOpen ? 'rounded-b-none' : 'rounded-lg'}
-                ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-              `}
-              onClick={() => !disabled && toggleItem(index)}
-              disabled={disabled}
-            >
-              <span className="text-sm font-medium text-gray-900">{title}</span>
-              <svg
-                className={`
-                  w-5 h-5 text-gray-500 transform transition-transform duration-200
-                  ${isOpen ? 'rotate-180' : ''}
-                `}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            
-            <div
-              className={`
-                overflow-hidden transition-all duration-200 ease-in-out
-                ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
-              `}
-            >
-              <div className="px-4 pb-3 text-sm text-gray-700 border-t border-gray-200">
-                {content}
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
+    <AccordionPrimitive.Item
+      data-slot="accordion-item"
+      className={cn("border-b last:border-b-0", className)}
+      {...props}
+    />
+  )
 }
 
-// Predefined FAQ Accordion
-interface FAQItem {
-  question: string;
-  answer: string;
-}
-
-interface FAQAccordionProps {
-  items: FAQItem[];
-  className?: string;
-}
-
-export function FAQAccordion({ items, className }: FAQAccordionProps) {
+function AccordionTrigger({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
   return (
-    <Accordion className={className}>
-      {items.map((item, index) => (
-        <AccordionItem key={index} title={item.question}>
-          <div className="prose prose-sm max-w-none">
-            {item.answer}
-          </div>
-        </AccordionItem>
-      ))}
-    </Accordion>
-  );
+    <AccordionPrimitive.Header className="flex">
+      <AccordionPrimitive.Trigger
+        data-slot="accordion-trigger"
+        className={cn(
+          "focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180",
+          className
+        )}
+        {...props}
+      >
+        {children}
+        <ChevronDownIcon className="text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" />
+      </AccordionPrimitive.Trigger>
+    </AccordionPrimitive.Header>
+  )
 }
+
+function AccordionContent({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Content>) {
+  return (
+    <AccordionPrimitive.Content
+      data-slot="accordion-content"
+      className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm"
+      {...props}
+    >
+      <div className={cn("pt-0 pb-4", className)}>{children}</div>
+    </AccordionPrimitive.Content>
+  )
+}
+
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }

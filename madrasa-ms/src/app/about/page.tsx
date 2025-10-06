@@ -1,299 +1,412 @@
-﻿import Navbar from '@/components/Navbar';
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  BookOpen,
+  Users,
+  Award,
+  GraduationCap,
+  Trophy,
+  Target,
+  Heart,
+  Globe,
+  Mail,
+  Phone,
+  Calendar,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
 
 export default function AboutPage() {
+  const stats = [
+    { icon: Users, value: "2000+", label: "Students", color: "text-cyan-600" },
+    {
+      icon: GraduationCap,
+      value: "150+",
+      label: "Teachers",
+      color: "text-blue-600",
+    },
+    {
+      icon: Award,
+      value: "25+",
+      label: "Years Experience",
+      color: "text-purple-600",
+    },
+    {
+      icon: Trophy,
+      value: "50+",
+      label: "Awards Won",
+      color: "text-amber-600",
+    },
+  ];
+
+  const values = [
+    {
+      icon: Heart,
+      title: "Faith & Character",
+      description:
+        "Building strong Islamic character and values in every student",
+    },
+    {
+      icon: BookOpen,
+      title: "Quality Education",
+      description: "Providing comprehensive Islamic and modern education",
+    },
+    {
+      icon: Users,
+      title: "Community Focus",
+      description: "Serving the community through knowledge and service",
+    },
+    {
+      icon: Globe,
+      title: "Global Perspective",
+      description: "Preparing students for success in a global context",
+    },
+  ];
+
+  const quickLinks = [
+    {
+      title: "Our Mission & Vision",
+      description: "Learn about our goals and aspirations",
+      icon: Target,
+      href: "/about/mission-vission",
+      color: "from-cyan-500 to-blue-600",
+    },
+    {
+      title: "Our Teachers",
+      description: "Meet our distinguished faculty members",
+      icon: GraduationCap,
+      href: "/about/teachers",
+      color: "from-blue-500 to-purple-600",
+    },
+    {
+      title: "Management Committee",
+      description: "Our dedicated leadership team",
+      icon: Users,
+      href: "/about/committee",
+      color: "from-purple-500 to-pink-600",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      
-      <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 pt-20 pb-16">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-white">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              About Our <span className="text-yellow-300">Madrasa</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
-              Nurturing Hearts, Enlightening Minds, Building Character
-            </p>
-          </div>
-        </div>
-      </section>
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      {/* Hero Section */}
+      <section className="relative h-[400px] bg-cyan-600 overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-20"></div>
 
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            Welcome to Our Islamic Educational Institution
-          </h2>
-          <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-            Established with a vision to blend traditional Islamic teachings with modern educational methods, our madrasa has been serving the community for years. We pride ourselves on creating an environment where students can grow academically, spiritually, and socially.
+        <div className="relative container mx-auto px-4 h-full flex flex-col justify-center items-center text-white text-center">
+          <Badge
+            variant="secondary"
+            className="mb-4 bg-white/20 backdrop-blur-sm text-white border-white/30"
+          >
+            <BookOpen className="w-3 h-3 mr-1" />
+            About Madrasa MX
+          </Badge>
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 drop-shadow-lg">
+            About Our Madrasa
+          </h1>
+          <p className="text-xl md:text-2xl text-cyan-50 max-w-3xl drop-shadow-md">
+            Nurturing Islamic Knowledge & Excellence Since 1999
           </p>
-          
-          {/* Statistics */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 mb-16">
-            <div className="text-center bg-blue-50 rounded-xl p-6">
-              <div className="text-3xl font-bold text-blue-600 mb-2">15+</div>
-              <div className="text-gray-600">Years of Excellence</div>
-            </div>
-            <div className="text-center bg-yellow-50 rounded-xl p-6">
-              <div className="text-3xl font-bold text-yellow-600 mb-2">500+</div>
-              <div className="text-gray-600">Current Students</div>
-            </div>
-            <div className="text-center bg-green-50 rounded-xl p-6">
-              <div className="text-3xl font-bold text-green-600 mb-2">1200+</div>
-              <div className="text-gray-600">Graduates</div>
-            </div>
-            <div className="text-center bg-purple-50 rounded-xl p-6">
-              <div className="text-3xl font-bold text-purple-600 mb-2">25</div>
-              <div className="text-gray-600">Qualified Teachers</div>
+          <div className="mt-6 flex gap-4">
+            <Button
+              size="lg"
+              variant="secondary"
+              className="bg-white text-cyan-600 hover:bg-cyan-50"
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              Schedule a Visit
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-white text-white hover:bg-white/20"
+            >
+              <Phone className="w-4 h-4 mr-2" />
+              Contact Us
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Statistics Section */}
+      <section className="container mx-auto px-4 -mt-20 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {stats.map((stat, index) => (
+            <Card
+              key={index}
+              className="border-none shadow-xl bg-white hover:shadow-2xl transition-shadow"
+            >
+              <CardContent className="p-6 text-center">
+                <stat.icon className={`w-12 h-12 mx-auto mb-3 ${stat.color}`} />
+                <h3 className="text-3xl font-bold text-slate-900 mb-1">
+                  {stat.value}
+                </h3>
+                <p className="text-slate-600">{stat.label}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Our Story Section */}
+      <section className="container mx-auto px-4 py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
+            <Image
+              src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&h=600&fit=crop"
+              alt="Madrasa Building"
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div className="absolute bottom-6 left-6 right-6 text-white">
+              <Badge className="mb-2 bg-cyan-500">Established 1999</Badge>
+              <h3 className="text-2xl font-bold">25+ Years of Excellence</h3>
             </div>
           </div>
-          
-          <div className="grid md:grid-cols-2 gap-8 mt-12">
-            <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                  </svg>
+
+          <div>
+            <Badge variant="outline" className="mb-4">
+              <BookOpen className="w-3 h-3 mr-1" />
+              Our Story
+            </Badge>
+            <h2 className="text-4xl font-bold text-slate-900 mb-6">
+              Building a Legacy of Islamic Education
+            </h2>
+            <p className="text-lg text-slate-600 mb-4">
+              Founded in 1999, Madrasa MX has been at the forefront of providing
+              quality Islamic education combined with modern academic
+              excellence. Our journey began with a vision to create an
+              institution that bridges traditional Islamic scholarship with
+              contemporary educational methods.
+            </p>
+            <p className="text-lg text-slate-600 mb-6">
+              Over the past 25 years, we have educated thousands of students who
+              have gone on to become successful professionals, scholars, and
+              community leaders while maintaining strong Islamic values and
+              principles.
+            </p>
+            <div className="space-y-3">
+              {[
+                "Accredited Islamic curriculum",
+                "Modern teaching methodologies",
+                "State-of-the-art facilities",
+                "Qualified and experienced teachers",
+              ].map((item, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-cyan-600 rounded-full"></div>
+                  <p className="text-slate-700">{item}</p>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900">Our Mission</h3>
-              </div>
-              <p className="text-gray-600 leading-relaxed">Our mission is to provide exceptional Islamic education that nurtures both spiritual growth and academic excellence, preparing students to become responsible citizens and leaders in their communities.</p>
-            </div>
-            
-            <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-8 shadow-lg text-white">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mr-4">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold">Our Vision</h3>
-              </div>
-              <p className="text-blue-100 leading-relaxed">To be a leading institution in Islamic education, recognized for our commitment to excellence, innovation, and the holistic development of our students.</p>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Educational Programs */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Quick Links Section */}
+      <section className="py-20 bg-gradient-to-br from-slate-50 to-cyan-50">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Educational <span className="text-blue-600">Programs</span>
+            <Badge variant="outline" className="mb-4">
+              <ArrowRight className="w-3 h-3 mr-1" />
+              Explore More
+            </Badge>
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+              Learn More About Us
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Comprehensive educational pathways designed to nurture both spiritual and academic excellence
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Discover more about our mission, faculty, and leadership
             </p>
           </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-6">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Hifz Program</h3>
-              <p className="text-gray-600 mb-4">Complete memorization of the Holy Quran with proper Tajweed and understanding of its teachings.</p>
-              <div className="text-sm text-green-600 font-semibold">Duration: 3-5 years</div>
-            </div>
-            
-            <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Islamic Studies</h3>
-              <p className="text-gray-600 mb-4">Comprehensive study of Islamic theology, jurisprudence, and Arabic language fundamentals.</p>
-              <div className="text-sm text-blue-600 font-semibold">Duration: 4 years</div>
-            </div>
-            
-            <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
-                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Modern Education</h3>
-              <p className="text-gray-600 mb-4">Contemporary subjects including Mathematics, Science, English, and Computer Studies.</p>
-              <div className="text-sm text-purple-600 font-semibold">Duration: Ongoing</div>
-            </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {quickLinks.map((link, index) => (
+              <Link key={index} href={link.href}>
+                <Card className="border-none shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 h-full cursor-pointer group">
+                  <CardContent className="p-6">
+                    <div
+                      className={`w-16 h-16 bg-gradient-to-br ${link.color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
+                    >
+                      <link.icon className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-cyan-600 transition-colors">
+                      {link.title}
+                    </h3>
+                    <p className="text-slate-600 mb-4">{link.description}</p>
+                    <div className="flex items-center text-cyan-600 font-semibold group-hover:gap-2 transition-all">
+                      <span>Learn More</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Core Values */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Core Values Section */}
+      <section className="container mx-auto px-4 py-20">
+        <div className="text-center mb-12">
+          <Badge variant="outline" className="mb-4">
+            <Heart className="w-3 h-3 mr-1" />
+            What We Stand For
+          </Badge>
+          <h2 className="text-4xl font-bold text-slate-900 mb-4">
+            Our Core Values
+          </h2>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            The fundamental principles that guide everything we do
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          {values.map((value, index) => (
+            <Card
+              key={index}
+              className="border-none shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 bg-gradient-to-br from-white to-slate-50"
+            >
+              <CardContent className="p-6 text-center">
+                <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <value.icon className="w-7 h-7 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                  {value.title}
+                </h3>
+                <p className="text-slate-600">{value.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="bg-cyan-900 py-20">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Our Core <span className="text-yellow-600">Values</span>
+            <Badge variant="secondary" className="mb-4 bg-white/10 text-white">
+              Common Questions
+            </Badge>
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Frequently Asked Questions
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              The fundamental principles that guide our educational approach and community
+            <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+              Find answers to common questions about our madrasa
             </p>
           </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-yellow-200 transition-colors duration-300">
-                <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Excellence</h3>
-              <p className="text-gray-600">Striving for the highest standards in Islamic education and character development</p>
-            </div>
-            
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-red-200 transition-colors duration-300">
-                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Compassion</h3>
-              <p className="text-gray-600">Fostering empathy, kindness, and understanding in all our interactions</p>
-            </div>
-            
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-green-200 transition-colors duration-300">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Integrity</h3>
-              <p className="text-gray-600">Upholding honesty, transparency, and moral principles in all our endeavors</p>
-            </div>
+
+          <div className="max-w-3xl mx-auto">
+            <Accordion type="single" collapsible className="space-y-4">
+              <AccordionItem
+                value="item-1"
+                className="bg-white/10 backdrop-blur-sm border-white/20 rounded-lg px-6"
+              >
+                <AccordionTrigger className="text-white hover:text-cyan-200">
+                  What is the admission process?
+                </AccordionTrigger>
+                <AccordionContent className="text-slate-300">
+                  The admission process includes submitting an online
+                  application, providing required documents, attending an
+                  entrance assessment, and an interview with the admission
+                  committee. Applications are open throughout the year with
+                  specific intake periods.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem
+                value="item-2"
+                className="bg-white/10 backdrop-blur-sm border-white/20 rounded-lg px-6"
+              >
+                <AccordionTrigger className="text-white hover:text-cyan-200">
+                  What courses do you offer?
+                </AccordionTrigger>
+                <AccordionContent className="text-slate-300">
+                  We offer comprehensive Islamic studies including Quran
+                  memorization, Tajweed, Arabic language, Islamic jurisprudence
+                  (Fiqh), Hadith studies, and Islamic history. We also provide
+                  modern subjects aligned with national curriculum standards.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem
+                value="item-3"
+                className="bg-white/10 backdrop-blur-sm border-white/20 rounded-lg px-6"
+              >
+                <AccordionTrigger className="text-white hover:text-cyan-200">
+                  Are there scholarships available?
+                </AccordionTrigger>
+                <AccordionContent className="text-slate-300">
+                  Yes, we offer merit-based and need-based scholarships to
+                  deserving students. Scholarships cover partial to full tuition
+                  fees depending on the student's performance and family
+                  circumstances. Applications are reviewed each semester.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem
+                value="item-4"
+                className="bg-white/10 backdrop-blur-sm border-white/20 rounded-lg px-6"
+              >
+                <AccordionTrigger className="text-white hover:text-cyan-200">
+                  What are the class timings?
+                </AccordionTrigger>
+                <AccordionContent className="text-slate-300">
+                  We offer flexible timings with morning sessions from 8:00 AM
+                  to 12:00 PM and afternoon sessions from 2:00 PM to 6:00 PM.
+                  Weekend classes are also available. Specific timings vary by
+                  program and level.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem
+                value="item-5"
+                className="bg-white/10 backdrop-blur-sm border-white/20 rounded-lg px-6"
+              >
+                <AccordionTrigger className="text-white hover:text-cyan-200">
+                  Do you provide transportation?
+                </AccordionTrigger>
+                <AccordionContent className="text-slate-300">
+                  Yes, we provide safe and reliable transportation services
+                  covering major areas of the city. Our buses are equipped with
+                  GPS tracking and supervised by trained staff to ensure student
+                  safety.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
         </div>
       </section>
 
-      {/* Leadership Team */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Leadership <span className="text-blue-600">Team</span>
-            </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Dedicated scholars and educators leading our institution with wisdom and experience
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-white rounded-xl p-6 shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Dr. Ahmad Al-Mansouri</h3>
-              <p className="text-blue-600 font-semibold text-sm mb-2">Principal & Chief Scholar</p>
-              <p className="text-gray-600 text-xs">PhD in Islamic Studies, Al-Azhar University</p>
-            </div>
-            
-            <div className="bg-white rounded-xl p-6 shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Ustadh Muhammad Hassan</h3>
-              <p className="text-green-600 font-semibold text-sm mb-2">Head of Hifz Department</p>
-              <p className="text-gray-600 text-xs">Master in Quranic Studies, Madinah University</p>
-            </div>
-            
-            <div className="bg-white rounded-xl p-6 shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Sister Fatima Al-Zahra</h3>
-              <p className="text-purple-600 font-semibold text-sm mb-2">Director of Women&apos;s Section</p>
-              <p className="text-gray-600 text-xs">MA in Islamic Education, IIUI</p>
-            </div>
-            
-            <div className="bg-white rounded-xl p-6 shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
-              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Prof. Abdullah Rahman</h3>
-              <p className="text-yellow-600 font-semibold text-sm mb-2">Academic Coordinator</p>
-              <p className="text-gray-600 text-xs">PhD in Arabic Literature, Cairo University</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Achievements */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Our <span className="text-yellow-600">Achievements</span>
-            </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Recognition and awards that reflect our commitment to excellence in Islamic education
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-6 border border-yellow-200">
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-yellow-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-bold text-gray-900">Excellence in Islamic Education Award</h3>
-                    <span className="text-sm font-semibold text-yellow-600 bg-yellow-200 px-2 py-1 rounded">2023</span>
-                  </div>
-                  <p className="text-gray-600 text-sm">Recognized for outstanding contribution to Islamic education and community development.</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-green-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-bold text-gray-900">Community Service Recognition</h3>
-                    <span className="text-sm font-semibold text-green-600 bg-green-200 px-2 py-1 rounded">2022</span>
-                  </div>
-                  <p className="text-gray-600 text-sm">Honored for exceptional community outreach and social welfare programs.</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-blue-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-bold text-gray-900">Academic Excellence Certification</h3>
-                    <span className="text-sm font-semibold text-blue-600 bg-blue-200 px-2 py-1 rounded">2021</span>
-                  </div>
-                  <p className="text-gray-600 text-sm">Certified for maintaining high academic standards and innovative teaching methods.</p>
-                </div>
-              </div>
-            </div>
+      {/* CTA Section */}
+      <section className="container mx-auto px-4 pb-20 mt-20">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-slate-900 mb-4">
+            Join Our Growing Community
+          </h2>
+          <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
+            Take the first step towards a comprehensive Islamic education.
+            Enroll today and become part of our legacy.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button size="lg" className="bg-cyan-600 hover:bg-cyan-700">
+              <Users className="w-4 h-4 mr-2" />
+              Enroll Now
+            </Button>
+            <Button size="lg" className="bg-cyan-600 hover:bg-cyan-700">
+              <Users className="w-4 h-4 mr-2" />
+              Contact Admissions
+            </Button>
           </div>
         </div>
       </section>

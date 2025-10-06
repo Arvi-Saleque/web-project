@@ -1,31 +1,86 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.heroSection.upsert({
-    where: { id: 1 },
+  console.log('Start seeding...');
+
+  // Hash password
+  const hashedPassword = await bcrypt.hash('password123', 10);
+
+  // Create Admin
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@madrasa.edu' },
     update: {},
     create: {
-      id: 1,
-      titleLine1: 'Excellence in',
-      titleLine2: 'Islamic Education',
-      subtitle:
-        'Nurturing young minds with traditional Islamic values and modern educational excellence. Join our community of learners dedicated to academic achievement and spiritual growth.',
-      bgImageUrl:
-        'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      cta1Text: 'Apply Now',
-      cta1Href: '/admissions/apply',
-      cta2Text: 'Learn More',
-      cta2Href: '/about',
-      features: [
-        { title: 'Quality Education', description: 'Comprehensive Islamic curriculum with modern teaching methods' },
-        { title: 'Expert Faculty', description: 'Experienced teachers dedicated to student success and character building' },
-        { title: 'Modern Facilities', description: 'State-of-the-art campus with digital learning resources' },
-      ],
+      email: 'admin@madrasa.edu',
+      password: hashedPassword,
+      name: 'Admin User',
+      role: 'ADMIN',
+      adminProfile: {
+        create: {
+          position: 'Principal',
+          phone: '+880 1234-567890',
+        },
+      },
     },
   });
+
+  console.log('Created admin:', admin);
+
+  // Create Teacher
+  const teacher = await prisma.user.upsert({
+    where: { email: 'teacher@madrasa.edu' },
+    update: {},
+    create: {
+      email: 'teacher@madrasa.edu',
+      password: hashedPassword,
+      name: 'Teacher User',
+      role: 'TEACHER',
+      teacherProfile: {
+        create: {
+          subject: 'Islamic Studies',
+          qualification: 'M.A. in Islamic Studies',
+          phone: '+880 1234-567891',
+        },
+      },
+    },
+  });
+
+  console.log('Created teacher:', teacher);
+
+  // Create Student
+  const student = await prisma.user.upsert({
+    where: { email: 'student@madrasa.edu' },
+    update: {},
+    create: {
+      email: 'student@madrasa.edu',
+      password: hashedPassword,
+      name: 'Student User',
+      role: 'STUDENT',
+      studentProfile: {
+        create: {
+          rollNumber: 'STD001',
+          class: '10',
+          section: 'A',
+          parentName: 'Parent Name',
+          parentPhone: '+880 1234-567892',
+        },
+      },
+    },
+  });
+
+  console.log('Created student:', student);
+
+  console.log('Seeding finished.');
 }
 
-main().finally(async () => {
-  await prisma.$disconnect();
-});
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
