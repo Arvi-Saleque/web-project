@@ -56,7 +56,6 @@ const navigationItems = [
       { title: "Exam Routing", href: "/academic/exams" },
       { title: "Class Routine", href: "/academic/routine" },
       { title: "Exam Results", href: "/academic/results" },
-      { title: "Academic Calendar", href: "/academic/calendar" },
     ],
   },
   {

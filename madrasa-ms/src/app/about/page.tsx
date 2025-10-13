@@ -387,29 +387,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      <section className="container mx-auto px-4 pb-20 mt-20">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-slate-900 mb-4">
-            Join Our Growing Community
-          </h2>
-          <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
-            Take the first step towards a comprehensive Islamic education.
-            Enroll today and become part of our legacy.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="bg-cyan-600 hover:bg-cyan-700">
-              <Users className="w-4 h-4 mr-2" />
-              Enroll Now
-            </Button>
-            <Button size="lg" className="bg-cyan-600 hover:bg-cyan-700">
-              <Users className="w-4 h-4 mr-2" />
-              Contact Admissions
-            </Button>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
