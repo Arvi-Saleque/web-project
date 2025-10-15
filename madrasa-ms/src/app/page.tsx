@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Header from "@/components/common/header";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,20 +23,97 @@ import {
   Target,
   Heart,
   Star,
+  Award,
+  Shield,
+  Zap,
+  Globe,
 } from "lucide-react";
+import Navbar from "@/components/common/navbar";
+import Footer from "@/components/common/footer";
+
+// Icon mapping for dynamic rendering
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  GraduationCap,
+  BookOpen,
+  Trophy,
+  Target,
+  Heart,
+  Star,
+  Users,
+  Award,
+  Shield,
+  Zap,
+  Clock,
+  Globe,
+};
+
+interface Stat {
+  id: string;
+  label: string;
+  value: string;
+  order: number;
+}
+
+interface Feature {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  iconColor: string;
+  order: number;
+}
 
 export default function Home() {
+  const [stats, setStats] = useState<Stat[]>([]);
+  const [features, setFeatures] = useState<Feature[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchHomePageData();
+  }, []);
+
+  const fetchHomePageData = async () => {
+    try {
+      const [statsRes, featuresRes] = await Promise.all([
+        fetch("/api/homepage/stats"),
+        fetch("/api/homepage/features"),
+      ]);
+
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        setStats(statsData);
+      }
+
+      if (featuresRes.ok) {
+        const featuresData = await featuresRes.json();
+        setFeatures(featuresData);
+      }
+    } catch (error) {
+      console.error("Error fetching homepage data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getIconColorClasses = (color: string) => {
+    const colorMap: Record<string, string> = {
+      cyan: "bg-cyan-100 text-cyan-600",
+      blue: "bg-blue-100 text-blue-600",
+      purple: "bg-purple-100 text-purple-600",
+      amber: "bg-amber-100 text-amber-600",
+      rose: "bg-rose-100 text-rose-600",
+      green: "bg-green-100 text-green-600",
+    };
+    return colorMap[color] || "bg-cyan-100 text-cyan-600";
+  };
   return (
     <div>
+      <Navbar />
       <Header />
-
       {/* Services Section */}
       <section className="container mx-auto px-4 py-20">
         <div className="text-center space-y-4 mb-16">
-          <Badge className="bg-cyan-100 text-cyan-700 border-cyan-300">
-            What We Offer
-          </Badge>
-          <h2 className="text-4xl font-bold text-slate-900">Our Services</h2>
+          <h2 className="text-4xl font-bold text-slate-900">About US</h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Comprehensive educational services designed to nurture minds and
             hearts
@@ -106,24 +186,29 @@ export default function Home() {
       {/* Stats Section */}
       <section className="bg-cyan-600 py-16">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
-            <div>
-              <div className="text-5xl font-bold mb-2">500+</div>
-              <p className="text-cyan-100 text-lg">Students</p>
+          {isLoading ? (
+            <div className="text-center text-white">
+              <p className="text-xl">Loading statistics...</p>
             </div>
-            <div>
-              <div className="text-5xl font-bold mb-2">50+</div>
-              <p className="text-cyan-100 text-lg">Teachers</p>
+          ) : stats.length > 0 ? (
+            <div
+              className={`grid grid-cols-2 md:grid-cols-${Math.min(
+                stats.length,
+                4
+              )} gap-8 text-center text-white`}
+            >
+              {stats.map((stat) => (
+                <div key={stat.id}>
+                  <div className="text-5xl font-bold mb-2">{stat.value}</div>
+                  <p className="text-cyan-100 text-lg">{stat.label}</p>
+                </div>
+              ))}
             </div>
-            <div>
-              <div className="text-5xl font-bold mb-2">20+</div>
-              <p className="text-cyan-100 text-lg">Years</p>
+          ) : (
+            <div className="text-center text-white">
+              <p className="text-xl">No statistics available</p>
             </div>
-            <div>
-              <div className="text-5xl font-bold mb-2">95%</div>
-              <p className="text-cyan-100 text-lg">Success Rate</p>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -141,117 +226,47 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card className="border-2 border-slate-200 hover:border-cyan-300 transition-colors">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <GraduationCap className="w-6 h-6 text-cyan-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">
-                    Qualified Teachers
-                  </h3>
-                  <p className="text-sm text-slate-600">
-                    Experienced and dedicated faculty committed to student
-                    success
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 border-slate-200 hover:border-cyan-300 transition-colors">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <BookOpen className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">
-                    Modern Curriculum
-                  </h3>
-                  <p className="text-sm text-slate-600">
-                    Updated syllabus combining traditional and modern education
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 border-slate-200 hover:border-cyan-300 transition-colors">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Trophy className="w-6 h-6 text-purple-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">
-                    Proven Results
-                  </h3>
-                  <p className="text-sm text-slate-600">
-                    Consistent track record of academic excellence and
-                    achievements
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 border-slate-200 hover:border-cyan-300 transition-colors">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Target className="w-6 h-6 text-amber-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">
-                    Holistic Approach
-                  </h3>
-                  <p className="text-sm text-slate-600">
-                    Focus on academic, moral, and character development
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 border-slate-200 hover:border-cyan-300 transition-colors">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Heart className="w-6 h-6 text-rose-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">
-                    Safe Environment
-                  </h3>
-                  <p className="text-sm text-slate-600">
-                    Secure and nurturing atmosphere for optimal learning
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 border-slate-200 hover:border-cyan-300 transition-colors">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Star className="w-6 h-6 text-green-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">
-                    Extracurricular Activities
-                  </h3>
-                  <p className="text-sm text-slate-600">
-                    Sports, cultural programs, and community engagement
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {isLoading ? (
+          <div className="text-center py-12">
+            <p className="text-xl text-slate-600">Loading features...</p>
+          </div>
+        ) : features.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((feature) => {
+              const IconComponent = iconMap[feature.icon] || GraduationCap;
+              return (
+                <Card
+                  key={feature.id}
+                  className="border-2 border-slate-200 hover:border-cyan-300 transition-colors"
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      <div
+                        className={`w-12 h-12 ${getIconColorClasses(
+                          feature.iconColor
+                        )} rounded-full flex items-center justify-center flex-shrink-0`}
+                      >
+                        <IconComponent className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-slate-900 mb-2">
+                          {feature.title}
+                        </h3>
+                        <p className="text-sm text-slate-600">
+                          {feature.description}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-xl text-slate-600">No features available</p>
+          </div>
+        )}
       </section>
 
       {/* Quick Links Section */}
@@ -296,9 +311,9 @@ export default function Home() {
                 <CardContent className="p-6 text-center">
                   <Calendar className="w-12 h-12 text-amber-600 mx-auto mb-3" />
                   <h3 className="text-lg font-bold text-slate-900 mb-1">
-                    Calendar
+                    News & Events
                   </h3>
-                  <p className="text-sm text-slate-600">Important dates</p>
+                  <p className="text-sm text-slate-600">Important news</p>
                 </CardContent>
               </Card>
             </Link>
@@ -340,6 +355,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 }

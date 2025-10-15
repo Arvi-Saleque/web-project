@@ -15,8 +15,19 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Slider data - Replace with your actual images and content
-const slides = [
+// Slider interface
+interface Slide {
+  id: number;
+  image: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  primaryButton: string;
+  secondaryButton: string;
+}
+
+// Default slides - used as fallback if API fails
+const defaultSlides: Slide[] = [
   {
     id: 1,
     image:
@@ -76,17 +87,41 @@ const features = [
 export default function Header() {
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = React.useState(true);
+  const [slides, setSlides] = React.useState<Slide[]>(defaultSlides);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  // Fetch slides from API
+  React.useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        const response = await fetch("/api/header-slides");
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.length > 0) {
+            setSlides(data);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching slides:", error);
+        // Keep default slides on error
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSlides();
+  }, []);
 
   // Auto-play functionality
   React.useEffect(() => {
-    if (!isAutoPlaying) return;
+    if (!isAutoPlaying || isLoading) return;
 
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000); // Change slide every 5 seconds
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, slides.length, isLoading]);
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index);

@@ -73,3 +73,72 @@ model StudentProfile {
 
   @@index([rollNumber])
 }
+
+// Header Slider for homepage
+model HeaderSlide {
+  id              String   @id @default(cuid())
+  image           String
+  title           String
+  subtitle        String
+  description     String
+  primaryButton   String
+  secondaryButton String
+  order           Int      @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([order])
+  @@index([isActive])
+}
+
+// Homepage Statistics
+model HomepageStat {
+  id          String   @id @default(cuid())
+  label       String   // e.g., "Students", "Teachers"
+  value       String   // e.g., "500+", "50+"
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+}
+
+// Homepage Features (Why Choose Us)
+model HomepageFeature {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  icon        String   // Icon name from lucide-react
+  iconColor   String   // e.g., "cyan", "blue", "purple"
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+}
+
+// Academic Assignments
+model Assignment {
+  id             String   @id @default(cuid())
+  class          String   // e.g., "Grade 10"
+  section        String   // e.g., "A", "B", "C"
+  subject        String   // e.g., "Islamic Studies", "Arabic"
+  name           String   // Assignment title
+  instructions   String   @db.Text // Detailed instructions
+  assignDate     DateTime // Date when assignment was given
+  submissionDate DateTime // Due date for submission
+  marks          Int      // Total marks
+  priority       String   // "high", "medium", "low"
+  order          Int      @default(0)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([class])
+  @@index([subject])
+  @@index([priority])
+  @@index([order])
+}

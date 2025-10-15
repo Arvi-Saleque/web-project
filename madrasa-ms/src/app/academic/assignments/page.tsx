@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import Navbar from "@/components/common/navbar";
+import Footer from "@/components/common/footer";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -45,97 +47,42 @@ interface Assignment {
   assignDate: string;
   submissionDate: string;
   marks: number;
-  priority: "high" | "medium" | "low";
+  priority: string;
 }
 
 export default function AssignmentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterClass, setFilterClass] = useState("all");
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const assignments: Assignment[] = [
-    {
-      id: "ASG-001",
-      class: "Grade 10",
-      section: "A",
-      subject: "Islamic Studies",
-      name: "Tafsir of Surah Al-Baqarah",
-      instructions:
-        "Write a detailed tafsir covering verses 1-20 with proper references",
-      assignDate: "2025-09-25",
-      submissionDate: "2025-10-10",
-      marks: 50,
-      priority: "high",
-    },
-    {
-      id: "ASG-002",
-      class: "Grade 9",
-      section: "B",
-      subject: "Arabic Language",
-      name: "Arabic Grammar Exercise",
-      instructions:
-        "Complete exercises on page 45-50 focusing on verb conjugations",
-      assignDate: "2025-09-28",
-      submissionDate: "2025-10-08",
-      marks: 30,
-      priority: "medium",
-    },
-    {
-      id: "ASG-003",
-      class: "Grade 11",
-      section: "A",
-      subject: "Hadith Studies",
-      name: "Analysis of Sahih Bukhari",
-      instructions:
-        "Analyze 10 hadiths from the Book of Faith with chain of narrators",
-      assignDate: "2025-09-20",
-      submissionDate: "2025-10-05",
-      marks: 40,
-      priority: "high",
-    },
-    {
-      id: "ASG-004",
-      class: "Grade 8",
-      section: "C",
-      subject: "Quran Memorization",
-      name: "Surah Al-Mulk Memorization",
-      instructions: "Memorize complete Surah Al-Mulk with proper tajweed",
-      assignDate: "2025-09-22",
-      submissionDate: "2025-10-15",
-      marks: 100,
-      priority: "medium",
-    },
-    {
-      id: "ASG-005",
-      class: "Grade 10",
-      section: "B",
-      subject: "Fiqh",
-      name: "Rules of Wudu and Prayer",
-      instructions:
-        "Write detailed notes on the fiqh rulings of wudu and prayer",
-      assignDate: "2025-09-30",
-      submissionDate: "2025-10-12",
-      marks: 35,
-      priority: "low",
-    },
-    {
-      id: "ASG-006",
-      class: "Grade 9",
-      section: "A",
-      subject: "Islamic History",
-      name: "The Life of Prophet Muhammad (SAW)",
-      instructions:
-        "Research and write about the Medinan period (5 pages minimum)",
-      assignDate: "2025-09-26",
-      submissionDate: "2025-10-11",
-      marks: 45,
-      priority: "medium",
-    },
-  ];
+  useEffect(() => {
+    fetchAssignments();
+  }, []);
+
+  const fetchAssignments = async () => {
+    try {
+      const response = await fetch("/api/assignments");
+      if (response.ok) {
+        const data = await response.json();
+        setAssignments(data);
+      }
+    } catch (error) {
+      console.error("Error fetching assignments:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Generate a readable assignment ID (ASG-001, ASG-002, etc.)
+  const generateDisplayId = (index: number) => {
+    return `ASG-${String(index + 1).padStart(3, "0")}`;
+  };
 
   const stats = [
     {
       icon: FileText,
-      value: "24",
+      value: assignments.length.toString(),
       label: "Total Assignments",
       color: "text-cyan-600",
     },
@@ -173,6 +120,7 @@ export default function AssignmentsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      <Navbar />
       {/* Hero Section */}
       <section className="relative h-[300px] bg-cyan-600 overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-20"></div>
@@ -204,28 +152,8 @@ export default function AssignmentsPage() {
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="container mx-auto px-4 -mt-16 relative z-10 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <Card
-              key={index}
-              className="border-none shadow-lg bg-white hover:shadow-xl transition-shadow"
-            >
-              <CardContent className="p-6 text-center">
-                <stat.icon className={`w-10 h-10 mx-auto mb-3 ${stat.color}`} />
-                <h3 className="text-3xl font-bold text-slate-900 mb-1">
-                  {stat.value}
-                </h3>
-                <p className="text-slate-600 text-sm">{stat.label}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
       {/* Main Content */}
-      <section className="container mx-auto px-4 pb-20">
+      <section className="container mx-auto px-4 pb-20 mt-10">
         <Card className="border-none shadow-xl">
           <CardHeader className="border-b bg-slate-50/50">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -306,14 +234,25 @@ export default function AssignmentsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredAssignments.length > 0 ? (
-                    filteredAssignments.map((assignment) => (
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={10} className="text-center py-12">
+                        <div className="flex flex-col items-center gap-3">
+                          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600"></div>
+                          <p className="text-slate-500">
+                            Loading assignments...
+                          </p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : filteredAssignments.length > 0 ? (
+                    filteredAssignments.map((assignment, index) => (
                       <TableRow
                         key={assignment.id}
                         className="hover:bg-slate-50"
                       >
                         <TableCell className="font-medium text-cyan-600">
-                          {assignment.id}
+                          {generateDisplayId(index)}
                         </TableCell>
                         <TableCell>{assignment.class}</TableCell>
                         <TableCell>
@@ -390,6 +329,7 @@ export default function AssignmentsPage() {
           </CardContent>
         </Card>
       </section>
+      <Footer />
     </div>
   );
 }
