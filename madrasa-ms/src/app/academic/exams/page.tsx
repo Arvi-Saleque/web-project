@@ -2,7 +2,7 @@
 
 import Navbar from "@/components/common/navbar";
 import Footer from "@/components/common/footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -40,110 +40,49 @@ interface ExamRoutine {
   id: string;
   examName: string;
   grade: string;
-  examType: "midterm" | "final" | "terminal";
+  examType: string;
   startDate: string;
   endDate: string;
   imageUrl: string;
   pdfUrl: string;
-  status: "upcoming" | "ongoing" | "completed";
+  status: string;
   totalDays: number;
 }
 
 export default function ExamsPage() {
   const [selectedGrade, setSelectedGrade] = useState<string>("all");
   const [selectedExamType, setSelectedExamType] = useState<string>("all");
+  const [examRoutines, setExamRoutines] = useState<ExamRoutine[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const examRoutines: ExamRoutine[] = [
-    {
-      id: "1",
-      examName: "Midterm Examination 2025",
-      grade: "Grade 10",
-      examType: "midterm",
-      startDate: "2025-10-15",
-      endDate: "2025-10-25",
-      imageUrl:
-        "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&h=800&fit=crop",
-      pdfUrl: "/exams/grade-10-midterm.pdf",
-      status: "upcoming",
-      totalDays: 8,
-    },
-    {
-      id: "2",
-      examName: "Final Examination 2025",
-      grade: "Grade 9",
-      examType: "final",
-      startDate: "2025-12-01",
-      endDate: "2025-12-15",
-      imageUrl:
-        "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1200&h=800&fit=crop",
-      pdfUrl: "/exams/grade-9-final.pdf",
-      status: "upcoming",
-      totalDays: 10,
-    },
-    {
-      id: "3",
-      examName: "Midterm Examination 2025",
-      grade: "Grade 11",
-      examType: "midterm",
-      startDate: "2025-10-20",
-      endDate: "2025-10-30",
-      imageUrl:
-        "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=1200&h=800&fit=crop",
-      pdfUrl: "/exams/grade-11-midterm.pdf",
-      status: "upcoming",
-      totalDays: 8,
-    },
-    {
-      id: "4",
-      examName: "Terminal Examination 2025",
-      grade: "Grade 8",
-      examType: "terminal",
-      startDate: "2025-11-05",
-      endDate: "2025-11-15",
-      imageUrl:
-        "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1200&h=800&fit=crop",
-      pdfUrl: "/exams/grade-8-terminal.pdf",
-      status: "upcoming",
-      totalDays: 9,
-    },
-    {
-      id: "5",
-      examName: "Midterm Examination 2025",
-      grade: "Grade 9",
-      examType: "midterm",
-      startDate: "2025-10-18",
-      endDate: "2025-10-28",
-      imageUrl:
-        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&h=800&fit=crop",
-      pdfUrl: "/exams/grade-9-midterm.pdf",
-      status: "upcoming",
-      totalDays: 8,
-    },
-    {
-      id: "6",
-      examName: "Final Examination 2025",
-      grade: "Grade 10",
-      examType: "final",
-      startDate: "2025-12-05",
-      endDate: "2025-12-18",
-      imageUrl:
-        "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=1200&h=800&fit=crop",
-      pdfUrl: "/exams/grade-10-final.pdf",
-      status: "upcoming",
-      totalDays: 10,
-    },
-  ];
+  useEffect(() => {
+    fetchExamRoutines();
+  }, []);
+
+  const fetchExamRoutines = async () => {
+    try {
+      const response = await fetch("/api/exam-routines");
+      if (response.ok) {
+        const data = await response.json();
+        setExamRoutines(data);
+      }
+    } catch (error) {
+      console.error("Error fetching exam routines:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const stats = [
     {
       icon: ClipboardList,
-      value: "6",
+      value: examRoutines.length.toString(),
       label: "Total Exams",
       color: "text-cyan-600",
     },
     {
       icon: GraduationCap,
-      value: "4",
+      value: new Set(examRoutines.map((e) => e.grade)).size.toString(),
       label: "Grades",
       color: "text-blue-600",
     },
@@ -161,8 +100,8 @@ export default function ExamsPage() {
     },
   ];
 
-  const getStatusBadge = (status: ExamRoutine["status"]) => {
-    const badges = {
+  const getStatusBadge = (status: string) => {
+    const badges: Record<string, { label: string; className: string }> = {
       upcoming: {
         label: "Upcoming",
         className: "bg-blue-100 text-blue-700 border-blue-300",
@@ -176,16 +115,16 @@ export default function ExamsPage() {
         className: "bg-slate-100 text-slate-700 border-slate-300",
       },
     };
-    return badges[status];
+    return badges[status] || badges.upcoming;
   };
 
-  const getExamTypeColor = (type: ExamRoutine["examType"]) => {
-    const colors = {
+  const getExamTypeColor = (type: string) => {
+    const colors: Record<string, string> = {
       midterm: "bg-cyan-500",
       final: "bg-purple-500",
       terminal: "bg-amber-500",
     };
-    return colors[type];
+    return colors[type] || colors.midterm;
   };
 
   const handleDownload = (pdfUrl: string, filename: string) => {
@@ -235,28 +174,8 @@ export default function ExamsPage() {
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="container mx-auto px-4 -mt-16 relative z-10 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <Card
-              key={index}
-              className="border-none shadow-lg bg-white hover:shadow-xl transition-shadow"
-            >
-              <CardContent className="p-6 text-center">
-                <stat.icon className={`w-10 h-10 mx-auto mb-3 ${stat.color}`} />
-                <h3 className="text-3xl font-bold text-slate-900 mb-1">
-                  {stat.value}
-                </h3>
-                <p className="text-slate-600 text-sm">{stat.label}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
       {/* Main Content */}
-      <section className="container mx-auto px-4 pb-20">
+      <section className="container mx-auto px-4 pb-20 mt-10">
         <Card className="border-none shadow-xl">
           <CardHeader className="border-b bg-slate-50/50">
             <CardTitle className="text-2xl font-bold text-slate-900 flex items-center gap-2">
@@ -330,7 +249,14 @@ export default function ExamsPage() {
 
             {/* Results Section */}
             <div className="space-y-6">
-              {filteredExams.length > 0 ? (
+              {isLoading ? (
+                <div className="text-center py-16">
+                  <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-cyan-600 mb-4"></div>
+                  <p className="text-xl text-slate-600">
+                    Loading exam routines...
+                  </p>
+                </div>
+              ) : filteredExams.length > 0 ? (
                 <div>
                   <div className="mb-4 flex items-center justify-between">
                     <p className="text-sm text-slate-600">

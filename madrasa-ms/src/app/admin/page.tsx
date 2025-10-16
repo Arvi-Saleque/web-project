@@ -89,6 +89,14 @@ export default function AdminDashboard() {
       icon: GraduationCap,
       items: [
         { label: "Assignment Management", href: "/admin/academic/assignment" },
+        {
+          label: "Exam Routine Management",
+          href: "/admin/academic/examroutine",
+        },
+        {
+          label: "Class Routine Management",
+          href: "/admin/academic/classroutine",
+        },
         { label: "Daily Assignments", href: "/academic/assignments" },
         { label: "Exam Routing", href: "/academic/exams" },
         { label: "Class Routine", href: "/academic/routine" },

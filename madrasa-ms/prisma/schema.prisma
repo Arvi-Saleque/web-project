@@ -142,3 +142,45 @@ model Assignment {
   @@index([priority])
   @@index([order])
 }
+
+// Exam Routines
+model ExamRoutine {
+  id        String   @id @default(cuid())
+  examName  String   // e.g., "Midterm Examination 2025"
+  grade     String   // e.g., "Grade 10"
+  examType  String   // "midterm", "final", "terminal"
+  startDate DateTime // Exam start date
+  endDate   DateTime // Exam end date
+  imageUrl  String   // URL to exam routine image
+  pdfUrl    String   // URL to downloadable PDF
+  status    String   // "upcoming", "ongoing", "completed"
+  totalDays Int      // Total days of exam
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([grade])
+  @@index([examType])
+  @@index([status])
+  @@index([order])
+}
+
+// Class Routines
+model ClassRoutine {
+  id          String   @id @default(cuid())
+  grade       String   // e.g., "Grade 10", "Grade 9"
+  section     String   // e.g., "A", "B", "C"
+  term        String   // e.g., "Fall 2025", "Spring 2025"
+  imageUrl    String   // URL to class routine image
+  pdfUrl      String   // URL to downloadable PDF
+  updatedDate DateTime // Last update date for the routine
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([grade])
+  @@index([section])
+  @@index([order])
+}

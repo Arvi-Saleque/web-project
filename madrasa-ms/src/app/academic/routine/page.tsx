@@ -2,7 +2,7 @@
 
 import Navbar from "@/components/common/navbar";
 import Footer from "@/components/common/footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,78 +33,42 @@ interface ClassRoutine {
 
 export default function RoutinePage() {
   const [selectedGrade, setSelectedGrade] = useState("grade-10");
+  const [routines, setRoutines] = useState<ClassRoutine[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const routines: ClassRoutine[] = [
-    {
-      id: "1",
-      grade: "Grade 10",
-      section: "A",
-      term: "Fall 2025",
-      imageUrl:
-        "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1200&h=800&fit=crop",
-      pdfUrl: "/routines/grade-10-a.pdf",
-      updatedDate: "2025-09-15",
-    },
-    {
-      id: "2",
-      grade: "Grade 10",
-      section: "B",
-      term: "Fall 2025",
-      imageUrl:
-        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&h=800&fit=crop",
-      pdfUrl: "/routines/grade-10-b.pdf",
-      updatedDate: "2025-09-15",
-    },
-    {
-      id: "3",
-      grade: "Grade 9",
-      section: "A",
-      term: "Fall 2025",
-      imageUrl:
-        "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=1200&h=800&fit=crop",
-      pdfUrl: "/routines/grade-9-a.pdf",
-      updatedDate: "2025-09-18",
-    },
-    {
-      id: "4",
-      grade: "Grade 9",
-      section: "B",
-      term: "Fall 2025",
-      imageUrl:
-        "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&h=800&fit=crop",
-      pdfUrl: "/routines/grade-9-b.pdf",
-      updatedDate: "2025-09-18",
-    },
-    {
-      id: "5",
-      grade: "Grade 8",
-      section: "A",
-      term: "Fall 2025",
-      imageUrl:
-        "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=1200&h=800&fit=crop",
-      pdfUrl: "/routines/grade-8-a.pdf",
-      updatedDate: "2025-09-20",
-    },
-    {
-      id: "6",
-      grade: "Grade 11",
-      section: "A",
-      term: "Fall 2025",
-      imageUrl:
-        "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1200&h=800&fit=crop",
-      pdfUrl: "/routines/grade-11-a.pdf",
-      updatedDate: "2025-09-12",
-    },
-  ];
+  // Fetch class routines from API
+  useEffect(() => {
+    const fetchRoutines = async () => {
+      try {
+        const response = await fetch("/api/class-routines");
+        if (response.ok) {
+          const data = await response.json();
+          setRoutines(data);
+        }
+      } catch (error) {
+        console.error("Error fetching class routines:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
+    fetchRoutines();
+  }, []);
+
+  // Calculate stats dynamically
   const stats = [
     {
       icon: GraduationCap,
-      value: "12",
-      label: "Classes",
+      value: new Set(routines.map((r) => r.grade)).size.toString() || "0",
+      label: "Grades",
       color: "text-cyan-600",
     },
-    { icon: Users, value: "6", label: "Sections", color: "text-blue-600" },
+    {
+      icon: Users,
+      value: routines.length.toString(),
+      label: "Routines",
+      color: "text-blue-600",
+    },
     {
       icon: Clock,
       value: "8:00 AM",
@@ -125,28 +89,38 @@ export default function RoutinePage() {
     alert(`Downloading ${filename}... (Demo - PDF download would start here)`);
   };
 
-  const gradeGroups = [
-    {
-      id: "grade-8",
-      label: "Grade 8",
-      routines: routines.filter((r) => r.grade === "Grade 8"),
-    },
-    {
-      id: "grade-9",
-      label: "Grade 9",
-      routines: routines.filter((r) => r.grade === "Grade 9"),
-    },
-    {
-      id: "grade-10",
-      label: "Grade 10",
-      routines: routines.filter((r) => r.grade === "Grade 10"),
-    },
-    {
-      id: "grade-11",
-      label: "Grade 11",
-      routines: routines.filter((r) => r.grade === "Grade 11"),
-    },
-  ];
+  // Generate grade groups dynamically based on available routines
+  const uniqueGrades = Array.from(new Set(routines.map((r) => r.grade))).sort();
+  const gradeGroups = uniqueGrades.map((grade: string) => ({
+    id: grade.toLowerCase().replace(" ", "-"),
+    label: grade,
+    routines: routines.filter((r) => r.grade === grade),
+  }));
+
+  // Set initial selected grade
+  useEffect(() => {
+    if (
+      gradeGroups.length > 0 &&
+      !gradeGroups.find((g) => g.id === selectedGrade)
+    ) {
+      setSelectedGrade(gradeGroups[0].id);
+    }
+  }, [gradeGroups, selectedGrade]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-cyan-600 mx-auto mb-4"></div>
+            <p className="text-slate-600 text-lg">Loading class routines...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
@@ -182,28 +156,8 @@ export default function RoutinePage() {
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="container mx-auto px-4 -mt-16 relative z-10 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <Card
-              key={index}
-              className="border-none shadow-lg bg-white hover:shadow-xl transition-shadow"
-            >
-              <CardContent className="p-6 text-center">
-                <stat.icon className={`w-10 h-10 mx-auto mb-3 ${stat.color}`} />
-                <h3 className="text-3xl font-bold text-slate-900 mb-1">
-                  {stat.value}
-                </h3>
-                <p className="text-slate-600 text-sm">{stat.label}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
       {/* Main Content */}
-      <section className="container mx-auto px-4 pb-20">
+      <section className="container mx-auto px-4 pb-20 mt-10">
         <Card className="border-none shadow-xl">
           <CardHeader className="border-b bg-slate-50/50">
             <CardTitle className="text-2xl font-bold text-slate-900 flex items-center gap-2">
@@ -216,143 +170,161 @@ export default function RoutinePage() {
           </CardHeader>
 
           <CardContent className="p-6">
-            <Tabs
-              value={selectedGrade}
-              onValueChange={setSelectedGrade}
-              className="w-full"
-            >
-              <TabsList className="grid w-full grid-cols-4 mb-8">
+            {gradeGroups.length === 0 ? (
+              <div className="text-center py-12">
+                <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                  No Routines Available
+                </h3>
+                <p className="text-slate-600">
+                  Class routines will be available soon.
+                </p>
+              </div>
+            ) : (
+              <Tabs
+                value={selectedGrade}
+                onValueChange={setSelectedGrade}
+                className="w-full"
+              >
+                <TabsList
+                  className="grid w-full mb-8"
+                  style={{
+                    gridTemplateColumns: `repeat(${gradeGroups.length}, minmax(0, 1fr))`,
+                  }}
+                >
+                  {gradeGroups.map((group) => (
+                    <TabsTrigger
+                      key={group.id}
+                      value={group.id}
+                      className="gap-2"
+                    >
+                      <GraduationCap className="w-4 h-4" />
+                      {group.label}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+
                 {gradeGroups.map((group) => (
-                  <TabsTrigger
+                  <TabsContent
                     key={group.id}
                     value={group.id}
-                    className="gap-2"
+                    className="space-y-6"
                   >
-                    <GraduationCap className="w-4 h-4" />
-                    {group.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-
-              {gradeGroups.map((group) => (
-                <TabsContent
-                  key={group.id}
-                  value={group.id}
-                  className="space-y-6"
-                >
-                  {group.routines.length > 0 ? (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {group.routines.map((routine) => (
-                        <Card
-                          key={routine.id}
-                          className="border-2 hover:border-cyan-300 transition-all overflow-hidden group"
-                        >
-                          <CardHeader className="bg-gradient-to-r from-cyan-50 to-blue-50 border-b">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <CardTitle className="text-xl text-slate-900">
-                                  {routine.grade} - Section {routine.section}
-                                </CardTitle>
-                                <p className="text-sm text-slate-600 mt-1">
-                                  {routine.term}
-                                </p>
+                    {group.routines.length > 0 ? (
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {group.routines.map((routine) => (
+                          <Card
+                            key={routine.id}
+                            className="border-2 hover:border-cyan-300 transition-all overflow-hidden group"
+                          >
+                            <CardHeader className="bg-gradient-to-r from-cyan-50 to-blue-50 border-b">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <CardTitle className="text-xl text-slate-900">
+                                    {routine.grade} - Section {routine.section}
+                                  </CardTitle>
+                                  <p className="text-sm text-slate-600 mt-1">
+                                    {routine.term}
+                                  </p>
+                                </div>
+                                <Badge variant="outline" className="gap-1">
+                                  <Calendar className="w-3 h-3" />
+                                  Updated:{" "}
+                                  {new Date(
+                                    routine.updatedDate
+                                  ).toLocaleDateString("en-US", {
+                                    month: "short",
+                                    day: "numeric",
+                                  })}
+                                </Badge>
                               </div>
-                              <Badge variant="outline" className="gap-1">
-                                <Calendar className="w-3 h-3" />
-                                Updated:{" "}
-                                {new Date(
-                                  routine.updatedDate
-                                ).toLocaleDateString("en-US", {
-                                  month: "short",
-                                  day: "numeric",
-                                })}
-                              </Badge>
-                            </div>
-                          </CardHeader>
+                            </CardHeader>
 
-                          <CardContent className="p-0">
-                            {/* Image Preview */}
-                            <div className="relative h-80 overflow-hidden bg-slate-100">
-                              <Image
-                                src={routine.imageUrl}
-                                alt={`${routine.grade} Section ${routine.section} Routine`}
-                                fill
-                                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div className="absolute bottom-4 left-4 right-4 flex gap-3">
-                                  <Button
-                                    size="sm"
-                                    className="flex-1 bg-white text-slate-900 hover:bg-slate-100"
-                                    onClick={() =>
-                                      window.open(routine.imageUrl, "_blank")
-                                    }
-                                  >
-                                    <Eye className="w-4 h-4 mr-2" />
-                                    View Full
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    className="flex-1 bg-cyan-600 hover:bg-cyan-700"
-                                    onClick={() =>
-                                      handleDownload(
-                                        routine.pdfUrl,
-                                        `${routine.grade}-${routine.section}-routine.pdf`
-                                      )
-                                    }
-                                  >
-                                    <Download className="w-4 h-4 mr-2" />
-                                    Download PDF
-                                  </Button>
+                            <CardContent className="p-0">
+                              {/* Image Preview */}
+                              <div className="relative h-80 overflow-hidden bg-slate-100">
+                                <Image
+                                  src={routine.imageUrl}
+                                  alt={`${routine.grade} Section ${routine.section} Routine`}
+                                  fill
+                                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <div className="absolute bottom-4 left-4 right-4 flex gap-3">
+                                    <Button
+                                      size="sm"
+                                      className="flex-1 bg-white text-slate-900 hover:bg-slate-100"
+                                      onClick={() =>
+                                        window.open(routine.imageUrl, "_blank")
+                                      }
+                                    >
+                                      <Eye className="w-4 h-4 mr-2" />
+                                      View Full
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      className="flex-1 bg-cyan-600 hover:bg-cyan-700"
+                                      onClick={() =>
+                                        handleDownload(
+                                          routine.pdfUrl,
+                                          `${routine.grade}-${routine.section}-routine.pdf`
+                                        )
+                                      }
+                                    >
+                                      <Download className="w-4 h-4 mr-2" />
+                                      Download PDF
+                                    </Button>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
 
-                            {/* Action Buttons (Mobile Friendly) */}
-                            <div className="p-4 bg-slate-50 flex gap-3 lg:hidden">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="flex-1"
-                                onClick={() =>
-                                  window.open(routine.imageUrl, "_blank")
-                                }
-                              >
-                                <Eye className="w-4 h-4 mr-2" />
-                                View Full
-                              </Button>
-                              <Button
-                                size="sm"
-                                className="flex-1 bg-cyan-600 hover:bg-cyan-700"
-                                onClick={() =>
-                                  handleDownload(
-                                    routine.pdfUrl,
-                                    `${routine.grade}-${routine.section}-routine.pdf`
-                                  )
-                                }
-                              >
-                                <Download className="w-4 h-4 mr-2" />
-                                Download
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                      <h3 className="text-xl font-semibold text-slate-900 mb-2">
-                        No Routine Available
-                      </h3>
-                      <p className="text-slate-600">
-                        Class routine for {group.label} will be available soon.
-                      </p>
-                    </div>
-                  )}
-                </TabsContent>
-              ))}
-            </Tabs>
+                              {/* Action Buttons (Mobile Friendly) */}
+                              <div className="p-4 bg-slate-50 flex gap-3 lg:hidden">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="flex-1"
+                                  onClick={() =>
+                                    window.open(routine.imageUrl, "_blank")
+                                  }
+                                >
+                                  <Eye className="w-4 h-4 mr-2" />
+                                  View Full
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  className="flex-1 bg-cyan-600 hover:bg-cyan-700"
+                                  onClick={() =>
+                                    handleDownload(
+                                      routine.pdfUrl,
+                                      `${routine.grade}-${routine.section}-routine.pdf`
+                                    )
+                                  }
+                                >
+                                  <Download className="w-4 h-4 mr-2" />
+                                  Download
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                        <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                          No Routine Available
+                        </h3>
+                        <p className="text-slate-600">
+                          Class routine for {group.label} will be available
+                          soon.
+                        </p>
+                      </div>
+                    )}
+                  </TabsContent>
+                ))}
+              </Tabs>
+            )}
           </CardContent>
         </Card>
 

@@ -236,26 +236,6 @@ export default function ResultsPage() {
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="container mx-auto px-4 -mt-16 relative z-10 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <Card
-              key={index}
-              className="border-none shadow-lg bg-white hover:shadow-xl transition-shadow"
-            >
-              <CardContent className="p-6 text-center">
-                <stat.icon className={`w-10 h-10 mx-auto mb-3 ${stat.color}`} />
-                <h3 className="text-3xl font-bold text-slate-900 mb-1">
-                  {stat.value}
-                </h3>
-                <p className="text-slate-600 text-sm">{stat.label}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
       {/* Main Content */}
       <section className="container mx-auto px-4 pb-20">
         <Card className="border-none shadow-xl">
