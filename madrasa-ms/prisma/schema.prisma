@@ -184,3 +184,25 @@ model ClassRoutine {
   @@index([section])
   @@index([order])
 }
+
+// Exam Results
+model ExamResult {
+  id             String   @id @default(cuid())
+  examName       String   // e.g., "Midterm Examination 2025"
+  grade          String   // e.g., "Grade 10"
+  examType       String   // "midterm", "final", "terminal"
+  publishedDate  DateTime // Date when results were published
+  imageUrl       String   // URL to result sheet image
+  pdfUrl         String   // URL to downloadable PDF
+  status         String   // "published", "pending"
+  passPercentage Int      // Overall pass percentage for the class
+  order          Int      @default(0)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([grade])
+  @@index([examType])
+  @@index([status])
+  @@index([order])
+}

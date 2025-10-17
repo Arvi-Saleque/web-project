@@ -2,7 +2,7 @@
 
 import Navbar from "@/components/common/navbar";
 import Footer from "@/components/common/footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -52,8 +52,29 @@ interface ExamResult {
 export default function ResultsPage() {
   const [selectedGrade, setSelectedGrade] = useState<string>("all");
   const [selectedExamType, setSelectedExamType] = useState<string>("all");
+  const [examResults, setExamResults] = useState<ExamResult[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const examResults: ExamResult[] = [
+  // Fetch exam results from API
+  useEffect(() => {
+    const fetchExamResults = async () => {
+      try {
+        const response = await fetch("/api/exam-results");
+        if (response.ok) {
+          const data = await response.json();
+          setExamResults(data);
+        }
+      } catch (error) {
+        console.error("Error fetching exam results:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchExamResults();
+  }, []);
+
+  const hardcodedExamResults: ExamResult[] = [
     {
       id: "1",
       examName: "Midterm Examination 2025",
@@ -128,28 +149,41 @@ export default function ResultsPage() {
     },
   ];
 
+  // Use hardcoded data as fallback if no results from API
+  const displayResults =
+    examResults.length > 0 ? examResults : hardcodedExamResults;
+
+  // Calculate stats dynamically
+  const avgPassRate =
+    displayResults.length > 0
+      ? Math.round(
+          displayResults.reduce((sum, r) => sum + r.passPercentage, 0) /
+            displayResults.length
+        )
+      : 0;
+
   const stats = [
     {
       icon: FileSpreadsheet,
-      value: "6",
+      value: displayResults.length.toString(),
       label: "Published Results",
       color: "text-cyan-600",
     },
     {
       icon: GraduationCap,
-      value: "4",
+      value: new Set(displayResults.map((r) => r.grade)).size.toString(),
       label: "Grades",
       color: "text-blue-600",
     },
     {
       icon: TrendingUp,
-      value: "91%",
+      value: `${avgPassRate}%`,
       label: "Avg Pass Rate",
       color: "text-green-600",
     },
     {
       icon: Award,
-      value: "3",
+      value: new Set(displayResults.map((r) => r.examType)).size.toString(),
       label: "Exam Types",
       color: "text-amber-600",
     },
@@ -194,13 +228,28 @@ export default function ResultsPage() {
     alert(`Downloading ${filename}... (Demo - PDF download would start here)`);
   };
 
-  const filteredResults = examResults.filter((result) => {
+  const filteredResults = displayResults.filter((result) => {
     const matchesGrade =
       selectedGrade === "all" || result.grade === selectedGrade;
     const matchesType =
       selectedExamType === "all" || result.examType === selectedExamType;
     return matchesGrade && matchesType;
   });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-cyan-600 mx-auto mb-4"></div>
+            <p className="text-slate-600 text-lg">Loading exam results...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">

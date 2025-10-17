@@ -97,6 +97,10 @@ export default function AdminDashboard() {
           label: "Class Routine Management",
           href: "/admin/academic/classroutine",
         },
+        {
+          label: "Exam Result Management",
+          href: "/admin/academic/result",
+        },
         { label: "Daily Assignments", href: "/academic/assignments" },
         { label: "Exam Routing", href: "/academic/exams" },
         { label: "Class Routine", href: "/academic/routine" },
