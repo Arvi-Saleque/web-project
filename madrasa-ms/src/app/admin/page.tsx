@@ -77,7 +77,7 @@ export default function AdminDashboard() {
       label: "About Us",
       icon: Info,
       items: [
-        { label: "About", href: "/about" },
+        { label: "About", href: "/adamin/aboutus/about" },
         { label: "Mission & Vision", href: "/about/mission-vission" },
         { label: "Teachers Panel", href: "/about/teachers" },
         { label: "Committee", href: "/about/committee" },

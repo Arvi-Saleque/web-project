@@ -5,15 +5,15 @@ import { prisma } from "@/lib/prisma"
 export async function GET() {
   try {
     const examRoutines = await prisma.examRoutine.findMany({
-      where: { isActive: true },
       orderBy: { order: 'asc' },
     })
 
     return NextResponse.json(examRoutines)
   } catch (error) {
     console.error("Error fetching exam routines:", error)
+    console.error("Error details:", error instanceof Error ? error.message : String(error))
     return NextResponse.json(
-      { error: "Failed to fetch exam routines" },
+      { error: "Failed to fetch exam routines", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }

@@ -1,80 +1,67 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")   // use the pooled Neon URL
-  directUrl = env("DIRECT_URL")    // optional: non-pooled URL for migrations
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
-// User model for authentication
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String   // Hashed password
-  name      String
-  role      UserRole @default(STUDENT)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
 
-  // Profile relations based on role
-  adminProfile    AdminProfile?
-  teacherProfile  TeacherProfile?
-  studentProfile  StudentProfile?
+model User {
+  id             String          @id @default(cuid())
+  email          String          @unique
+  password       String
+  name           String
+  role           UserRole        @default(STUDENT)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  adminProfile   AdminProfile?
+  studentProfile StudentProfile?
+  teacherProfile TeacherProfile?
 
   @@index([email])
 }
 
-enum UserRole {
-  ADMIN
-  TEACHER
-  STUDENT
-}
-
-// Admin Profile
 model AdminProfile {
   id        String   @id @default(cuid())
   userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  position  String?  // e.g., "Principal", "Vice Principal"
+  position  String?
   phone     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Teacher Profile
 model TeacherProfile {
-  id           String   @id @default(cuid())
-  userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject      String?
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  subject       String?
   qualification String?
-  phone        String?
-  address      String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  phone         String?
+  address       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Student Profile
 model StudentProfile {
-  id           String   @id @default(cuid())
-  userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  rollNumber   String?  @unique
-  class        String?
-  section      String?
-  dateOfBirth  DateTime?
-  parentName   String?
-  parentPhone  String?
-  address      String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  rollNumber  String?   @unique
+  class       String?
+  section     String?
+  dateOfBirth DateTime?
+  parentName  String?
+  parentPhone String?
+  address     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([rollNumber])
 }
 
-// Header Slider for homepage
 model HeaderSlide {
   id              String   @id @default(cuid())
   image           String
@@ -92,26 +79,24 @@ model HeaderSlide {
   @@index([isActive])
 }
 
-// Homepage Statistics
 model HomepageStat {
-  id          String   @id @default(cuid())
-  label       String   // e.g., "Students", "Teachers"
-  value       String   // e.g., "500+", "50+"
-  order       Int      @default(0)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  label     String
+  value     String
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([order])
 }
 
-// Homepage Features (Why Choose Us)
 model HomepageFeature {
   id          String   @id @default(cuid())
   title       String
   description String
-  icon        String   // Icon name from lucide-react
-  iconColor   String   // e.g., "cyan", "blue", "purple"
+  icon        String
+  iconColor   String
   order       Int      @default(0)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -120,18 +105,17 @@ model HomepageFeature {
   @@index([order])
 }
 
-// Academic Assignments
 model Assignment {
   id             String   @id @default(cuid())
-  class          String   // e.g., "Grade 10"
-  section        String   // e.g., "A", "B", "C"
-  subject        String   // e.g., "Islamic Studies", "Arabic"
-  name           String   // Assignment title
-  instructions   String   @db.Text // Detailed instructions
-  assignDate     DateTime // Date when assignment was given
-  submissionDate DateTime // Due date for submission
-  marks          Int      // Total marks
-  priority       String   // "high", "medium", "low"
+  class          String
+  section        String
+  subject        String
+  name           String
+  instructions   String
+  assignDate     DateTime
+  submissionDate DateTime
+  marks          Int
+  priority       String
   order          Int      @default(0)
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
@@ -143,18 +127,17 @@ model Assignment {
   @@index([order])
 }
 
-// Exam Routines
 model ExamRoutine {
   id        String   @id @default(cuid())
-  examName  String   // e.g., "Midterm Examination 2025"
-  grade     String   // e.g., "Grade 10"
-  examType  String   // "midterm", "final", "terminal"
-  startDate DateTime // Exam start date
-  endDate   DateTime // Exam end date
-  imageUrl  String   // URL to exam routine image
-  pdfUrl    String   // URL to downloadable PDF
-  status    String   // "upcoming", "ongoing", "completed"
-  totalDays Int      // Total days of exam
+  examName  String
+  grade     String
+  examType  String
+  startDate DateTime
+  endDate   DateTime
+  imageUrl  String
+  pdfUrl    String
+  status    String
+  totalDays Int
   order     Int      @default(0)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
@@ -166,15 +149,14 @@ model ExamRoutine {
   @@index([order])
 }
 
-// Class Routines
 model ClassRoutine {
   id          String   @id @default(cuid())
-  grade       String   // e.g., "Grade 10", "Grade 9"
-  section     String   // e.g., "A", "B", "C"
-  term        String   // e.g., "Fall 2025", "Spring 2025"
-  imageUrl    String   // URL to class routine image
-  pdfUrl      String   // URL to downloadable PDF
-  updatedDate DateTime // Last update date for the routine
+  grade       String
+  section     String
+  term        String
+  imageUrl    String
+  pdfUrl      String
+  updatedDate DateTime
   order       Int      @default(0)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -185,17 +167,16 @@ model ClassRoutine {
   @@index([order])
 }
 
-// Exam Results
 model ExamResult {
   id             String   @id @default(cuid())
-  examName       String   // e.g., "Midterm Examination 2025"
-  grade          String   // e.g., "Grade 10"
-  examType       String   // "midterm", "final", "terminal"
-  publishedDate  DateTime // Date when results were published
-  imageUrl       String   // URL to result sheet image
-  pdfUrl         String   // URL to downloadable PDF
-  status         String   // "published", "pending"
-  passPercentage Int      // Overall pass percentage for the class
+  examName       String
+  grade          String
+  examType       String
+  publishedDate  DateTime
+  imageUrl       String
+  pdfUrl         String
+  status         String
+  passPercentage Int
   order          Int      @default(0)
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
@@ -205,4 +186,67 @@ model ExamResult {
   @@index([examType])
   @@index([status])
   @@index([order])
+}
+
+// About Us Section
+model AboutSection {
+  id              String   @id @default(cuid())
+  title           String   // e.g., "About Our Madrasa"
+  subtitle        String   // e.g., "Nurturing Islamic Knowledge & Excellence Since 1999"
+  establishedYear Int      // e.g., 1999
+  storyTitle      String   // e.g., "Building a Legacy of Islamic Education"
+  storyContent    String   @db.Text // Main story/description
+  storyImageUrl   String   // Main story image
+  heroImageUrl    String?  // Hero section background image (optional)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// About Us Statistics
+model AboutStat {
+  id        String   @id @default(cuid())
+  label     String   // e.g., "Students", "Teachers"
+  value     String   // e.g., "2000+", "150+"
+  icon      String   // Icon name from lucide-react (e.g., "Users", "GraduationCap")
+  color     String   // Tailwind color class (e.g., "text-cyan-600")
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+// About Us Core Values
+model AboutValue {
+  id          String   @id @default(cuid())
+  title       String   // e.g., "Faith & Character"
+  description String   @db.Text // Description of the value
+  icon        String   // Icon name from lucide-react
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+}
+
+// About Us FAQ
+model AboutFAQ {
+  id        String   @id @default(cuid())
+  question  String   // FAQ question
+  answer    String   @db.Text // FAQ answer
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  STUDENT
 }

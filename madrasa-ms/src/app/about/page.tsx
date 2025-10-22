@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,56 +26,111 @@ import {
   Calendar,
   ArrowRight,
   ArrowLeft,
+  LucideIcon,
 } from "lucide-react";
 import Footer from "@/components/common/footer";
 import Navbar from "@/components/common/navbar";
+import * as Icons from "lucide-react";
+
+// Interfaces
+interface AboutSection {
+  id: string;
+  title: string;
+  subtitle: string;
+  establishedYear: number;
+  storyTitle: string;
+  storyContent: string;
+  storyImageUrl: string;
+  heroImageUrl: string | null;
+}
+
+interface AboutStat {
+  id: string;
+  label: string;
+  value: string;
+  icon: string;
+  color: string;
+  order: number;
+}
+
+interface AboutValue {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  order: number;
+}
+
+interface AboutFAQ {
+  id: string;
+  question: string;
+  answer: string;
+  order: number;
+}
 
 export default function AboutPage() {
-  const stats = [
-    { icon: Users, value: "2000+", label: "Students", color: "text-cyan-600" },
-    {
-      icon: GraduationCap,
-      value: "150+",
-      label: "Teachers",
-      color: "text-blue-600",
-    },
-    {
-      icon: Award,
-      value: "25+",
-      label: "Years Experience",
-      color: "text-purple-600",
-    },
-    {
-      icon: Trophy,
-      value: "50+",
-      label: "Awards Won",
-      color: "text-amber-600",
-    },
-  ];
+  const [aboutSection, setAboutSection] = useState<AboutSection | null>(null);
+  const [stats, setStats] = useState<AboutStat[]>([]);
+  const [values, setValues] = useState<AboutValue[]>([]);
+  const [faqs, setFaqs] = useState<AboutFAQ[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const values = [
-    {
-      icon: Heart,
-      title: "Faith & Character",
-      description:
-        "Building strong Islamic character and values in every student",
-    },
-    {
-      icon: BookOpen,
-      title: "Quality Education",
-      description: "Providing comprehensive Islamic and modern education",
-    },
-    {
-      icon: Users,
-      title: "Community Focus",
-      description: "Serving the community through knowledge and service",
-    },
-    {
-      icon: Globe,
-      title: "Global Perspective",
-      description: "Preparing students for success in a global context",
-    },
-  ];
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  const fetchAllData = async () => {
+    try {
+      const [sectionRes, statsRes, valuesRes, faqsRes] = await Promise.all([
+        fetch("/api/about-section"),
+        fetch("/api/about-stats"),
+        fetch("/api/about-values"),
+        fetch("/api/about-faqs"),
+      ]);
+
+      if (sectionRes.ok) {
+        const sectionData = await sectionRes.json();
+        setAboutSection(sectionData);
+      }
+
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        setStats(statsData);
+      }
+
+      if (valuesRes.ok) {
+        const valuesData = await valuesRes.json();
+        setValues(valuesData);
+      }
+
+      if (faqsRes.ok) {
+        const faqsData = await faqsRes.json();
+        setFaqs(faqsData);
+      }
+    } catch (error) {
+      console.error("Error fetching about page data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Helper function to get icon component from string
+  const getIconComponent = (iconName: string): LucideIcon => {
+    const IconComponent = (Icons as any)[iconName];
+    return IconComponent || Icons.Heart;
+  };
+
+  // Default data for fallback
+  const defaultSection = {
+    title: "About Our Madrasa",
+    subtitle: "Nurturing Islamic Knowledge & Excellence Since 1999",
+    establishedYear: 1999,
+    storyTitle: "Building a Legacy of Islamic Education",
+    storyContent:
+      "Founded in 1999, Madrasa MX has been at the forefront of providing quality Islamic education combined with modern academic excellence.",
+    storyImageUrl:
+      "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&h=600&fit=crop",
+  };
 
   const quickLinks = [
     {
@@ -100,6 +156,26 @@ export default function AboutPage() {
     },
   ];
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-cyan-600 mb-4"></div>
+            <p className="text-xl text-slate-600">Loading about page...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  const displaySection = aboutSection || defaultSection;
+  const displayStats = stats.length > 0 ? stats : [];
+  const displayValues = values.length > 0 ? values : [];
+  const displayFaqs = faqs.length > 0 ? faqs : [];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <Navbar />
@@ -116,10 +192,10 @@ export default function AboutPage() {
             About Madrasa MX
           </Badge>
           <h1 className="text-5xl md:text-6xl font-bold mb-4 drop-shadow-lg">
-            About Our Madrasa
+            {displaySection.title}
           </h1>
           <p className="text-xl md:text-2xl text-cyan-50 max-w-3xl drop-shadow-md">
-            Nurturing Islamic Knowledge & Excellence Since 1999
+            {displaySection.subtitle}
           </p>
           <div className="mt-6 flex gap-4">
             <Button
@@ -144,22 +220,27 @@ export default function AboutPage() {
 
       {/* Statistics Section */}
       <section className="container mx-auto px-4 -mt-20 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <Card
-              key={index}
-              className="border-none shadow-xl bg-white hover:shadow-2xl transition-shadow"
-            >
-              <CardContent className="p-6 text-center">
-                <stat.icon className={`w-12 h-12 mx-auto mb-3 ${stat.color}`} />
-                <h3 className="text-3xl font-bold text-slate-900 mb-1">
-                  {stat.value}
-                </h3>
-                <p className="text-slate-600">{stat.label}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        {displayStats.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {displayStats.map((stat, index) => {
+              const StatIcon = getIconComponent(stat.icon);
+              return (
+                <Card
+                  key={stat.id}
+                  className="border-none shadow-xl bg-white hover:shadow-2xl transition-shadow"
+                >
+                  <CardContent className="p-6 text-center">
+                    <StatIcon className={`w-12 h-12 mx-auto mb-3 ${stat.color}`} />
+                    <h3 className="text-3xl font-bold text-slate-900 mb-1">
+                      {stat.value}
+                    </h3>
+                    <p className="text-slate-600">{stat.label}</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* Our Story Section */}
@@ -167,15 +248,19 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
             <Image
-              src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&h=600&fit=crop"
+              src={displaySection.storyImageUrl}
               alt="Madrasa Building"
               fill
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             <div className="absolute bottom-6 left-6 right-6 text-white">
-              <Badge className="mb-2 bg-cyan-500">Established 1999</Badge>
-              <h3 className="text-2xl font-bold">25+ Years of Excellence</h3>
+              <Badge className="mb-2 bg-cyan-500">
+                Established {displaySection.establishedYear}
+              </Badge>
+              <h3 className="text-2xl font-bold">
+                {new Date().getFullYear() - displaySection.establishedYear}+ Years of Excellence
+              </h3>
             </div>
           </div>
 
@@ -185,20 +270,10 @@ export default function AboutPage() {
               Our Story
             </Badge>
             <h2 className="text-4xl font-bold text-slate-900 mb-6">
-              Building a Legacy of Islamic Education
+              {displaySection.storyTitle}
             </h2>
-            <p className="text-lg text-slate-600 mb-4">
-              Founded in 1999, Madrasa MX has been at the forefront of providing
-              quality Islamic education combined with modern academic
-              excellence. Our journey began with a vision to create an
-              institution that bridges traditional Islamic scholarship with
-              contemporary educational methods.
-            </p>
-            <p className="text-lg text-slate-600 mb-6">
-              Over the past 25 years, we have educated thousands of students who
-              have gone on to become successful professionals, scholars, and
-              community leaders while maintaining strong Islamic values and
-              principles.
+            <p className="text-lg text-slate-600 mb-4 whitespace-pre-wrap">
+              {displaySection.storyContent}
             </p>
             <div className="space-y-3">
               {[
@@ -275,22 +350,25 @@ export default function AboutPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {values.map((value, index) => (
-            <Card
-              key={index}
-              className="border-none shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 bg-gradient-to-br from-white to-slate-50"
-            >
-              <CardContent className="p-6 text-center">
-                <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <value.icon className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">
-                  {value.title}
-                </h3>
-                <p className="text-slate-600">{value.description}</p>
-              </CardContent>
-            </Card>
-          ))}
+          {displayValues.map((value, index) => {
+            const ValueIcon = getIconComponent(value.icon);
+            return (
+              <Card
+                key={value.id}
+                className="border-none shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 bg-gradient-to-br from-white to-slate-50"
+              >
+                <CardContent className="p-6 text-center">
+                  <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <ValueIcon className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">
+                    {value.title}
+                  </h3>
+                  <p className="text-slate-600">{value.description}</p>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </section>
 
@@ -310,83 +388,28 @@ export default function AboutPage() {
           </div>
 
           <div className="max-w-3xl mx-auto">
-            <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem
-                value="item-1"
-                className="bg-white/10 backdrop-blur-sm border-white/20 rounded-lg px-6"
-              >
-                <AccordionTrigger className="text-white hover:text-cyan-200">
-                  What is the admission process?
-                </AccordionTrigger>
-                <AccordionContent className="text-slate-300">
-                  The admission process includes submitting an online
-                  application, providing required documents, attending an
-                  entrance assessment, and an interview with the admission
-                  committee. Applications are open throughout the year with
-                  specific intake periods.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem
-                value="item-2"
-                className="bg-white/10 backdrop-blur-sm border-white/20 rounded-lg px-6"
-              >
-                <AccordionTrigger className="text-white hover:text-cyan-200">
-                  What courses do you offer?
-                </AccordionTrigger>
-                <AccordionContent className="text-slate-300">
-                  We offer comprehensive Islamic studies including Quran
-                  memorization, Tajweed, Arabic language, Islamic jurisprudence
-                  (Fiqh), Hadith studies, and Islamic history. We also provide
-                  modern subjects aligned with national curriculum standards.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem
-                value="item-3"
-                className="bg-white/10 backdrop-blur-sm border-white/20 rounded-lg px-6"
-              >
-                <AccordionTrigger className="text-white hover:text-cyan-200">
-                  Are there scholarships available?
-                </AccordionTrigger>
-                <AccordionContent className="text-slate-300">
-                  Yes, we offer merit-based and need-based scholarships to
-                  deserving students. Scholarships cover partial to full tuition
-                  fees depending on the student's performance and family
-                  circumstances. Applications are reviewed each semester.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem
-                value="item-4"
-                className="bg-white/10 backdrop-blur-sm border-white/20 rounded-lg px-6"
-              >
-                <AccordionTrigger className="text-white hover:text-cyan-200">
-                  What are the class timings?
-                </AccordionTrigger>
-                <AccordionContent className="text-slate-300">
-                  We offer flexible timings with morning sessions from 8:00 AM
-                  to 12:00 PM and afternoon sessions from 2:00 PM to 6:00 PM.
-                  Weekend classes are also available. Specific timings vary by
-                  program and level.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem
-                value="item-5"
-                className="bg-white/10 backdrop-blur-sm border-white/20 rounded-lg px-6"
-              >
-                <AccordionTrigger className="text-white hover:text-cyan-200">
-                  Do you provide transportation?
-                </AccordionTrigger>
-                <AccordionContent className="text-slate-300">
-                  Yes, we provide safe and reliable transportation services
-                  covering major areas of the city. Our buses are equipped with
-                  GPS tracking and supervised by trained staff to ensure student
-                  safety.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            {displayFaqs.length > 0 ? (
+              <Accordion type="single" collapsible className="space-y-4">
+                {displayFaqs.map((faq, index) => (
+                  <AccordionItem
+                    key={faq.id}
+                    value={`item-${index + 1}`}
+                    className="bg-white/10 backdrop-blur-sm border-white/20 rounded-lg px-6"
+                  >
+                    <AccordionTrigger className="text-white hover:text-cyan-200">
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-slate-300 whitespace-pre-wrap">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            ) : (
+              <div className="text-center text-white/70 py-8">
+                <p>No FAQs available at the moment.</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
